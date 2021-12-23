@@ -1,0 +1,11 @@
+name: HuntersMC
+version: 0.1.0
+main: com.gabler.huntersmc.HuntersMcPlugin
+description: Simple plugin for hunting down other players for PvP.
+authors:
+  - AndyTheBrick
+commands:
+  hunt:
+    description: Reveal the location of another player and let them know you are tracking them.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage: /hunt <playerName>"
