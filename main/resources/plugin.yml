@@ -9,3 +9,7 @@ commands:
     description: Reveal the location of another player and let them know you are tracking them.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage: /hunt <playerName>"
+  claim:
+    description: Attempt to claim territory you are in.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage: /claim <territory name [if first time]>"

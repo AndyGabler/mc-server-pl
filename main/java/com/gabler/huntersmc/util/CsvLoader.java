@@ -53,8 +53,13 @@ public class CsvLoader {
         final int newLength = columnList.length;
 
         columnToIndexMap.clear();
+        metaRow = "";
         for (int index = 0; index < columnList.length; index++) {
             columnToIndexMap.put(columnList[index], index);
+            metaRow += columnList[index];
+            if (index != columnList.length - 1) {
+                metaRow += ",";
+            }
         }
         if (oldLength == newLength) {
             return;
@@ -65,6 +70,30 @@ public class CsvLoader {
                 data.get(rowIndex).add(null);
                 setValue(rowIndex, columnIndex, null);
             }
+        }
+    }
+
+    public CsvRow newRow() {
+        final ArrayList<String> rowData = new ArrayList<>();
+        for (int index = 0; index < columnToIndexMap.size(); index++) {
+            rowData.add(null);
+        }
+        data.add(rowData);
+        return new CsvRow(this, data.size() - 1);
+    }
+
+    public void deleteRow(int rowIndex) {
+        data.remove(rowIndex);
+    }
+
+    public void deleteRow(CsvRow row) {
+        deleteRow(row.getOriginalIndex());
+    }
+
+    public void ensureFileExists() throws IOException {
+        final File file = new File(path);
+        if (!file.exists()) {
+            file.createNewFile();
         }
     }
 
@@ -111,7 +140,11 @@ public class CsvLoader {
     }
 
     public void save(BufferedWriter writer) throws IOException {
-        final StringBuilder builder = new StringBuilder(metaRow).append("\n");
+        final StringBuilder builder = new StringBuilder(metaRow);
+
+        if (data.size() != 0) {
+            builder.append("\n");
+        }
 
         for (int rowIndex = 0; rowIndex < data.size(); rowIndex++) {
             ArrayList<String> row = data.get(rowIndex);
