@@ -43,7 +43,6 @@ public class CsvLoader {
     }
 
     public void setMetaDataRow(String... columnList) {
-        // TODO, yeah, you have some resizing to do if columns are added
         // Just adds the values and null values
         if (columnList.length < columnToIndexMap.size()) {
             throw new CsvDataIntegrityException("CSV loader will not prune data. Can only add/rename columns.");

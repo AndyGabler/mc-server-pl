@@ -1,6 +1,6 @@
 package com.gabler.huntersmc.commands;
 
-import com.gabler.huntersmc.context.TerritoryData;
+import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;

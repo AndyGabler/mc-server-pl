@@ -1,5 +1,7 @@
-package com.gabler.huntersmc.context;
+package com.gabler.huntersmc.context.territory;
 
+import com.gabler.huntersmc.context.territory.model.Territory;
+import com.gabler.huntersmc.context.territory.model.TerritoryChunkClaim;
 import com.gabler.huntersmc.util.CsvDataIntegrityException;
 import com.gabler.huntersmc.util.CsvLoader;
 import com.gabler.huntersmc.util.CsvRow;
@@ -15,9 +17,9 @@ import java.util.UUID;
 
 public class TerritoryData {
 
-    private ArrayList<Territory> territories = new ArrayList<>();
-    private CsvLoader loader;
-    private JavaPlugin plugin;
+    private final ArrayList<Territory> territories = new ArrayList<>();
+    private final CsvLoader loader;
+    private final JavaPlugin plugin;
 
     public TerritoryData(JavaPlugin plugin) throws IOException, CsvDataIntegrityException {
         this.plugin = plugin;
@@ -31,7 +33,7 @@ public class TerritoryData {
 
         List<CsvRow> rows = loader.getRows();
         for (int index = 0; index < rows.size(); index++) {
-            CsvRow row = rows.get(index);
+            final CsvRow row = rows.get(index);
             final String territoryName = row.getValue("territory");
             final String ownerUuid = row.getValue("ownerUuid");
             final int chunkX = Integer.parseInt(row.getValue("chunkX"));
@@ -39,41 +41,53 @@ public class TerritoryData {
 
             Territory rowTerritory = territories
                 .stream()
-                .filter(territory -> territory.name.equalsIgnoreCase(territoryName))
+                .filter(territory -> territory.getName().equalsIgnoreCase(territoryName))
                 .findFirst().orElse(null);
 
             if (rowTerritory == null) {
                 rowTerritory = new Territory();
-                rowTerritory.name = territoryName;
-                rowTerritory.ownerUuid = ownerUuid;
-                rowTerritory.ownerName = Bukkit.getOfflinePlayer(UUID.fromString(ownerUuid)).getName();
+                rowTerritory.setName(territoryName);
+                rowTerritory.setOwnerUuid(ownerUuid);
+                rowTerritory.setOwnerName(Bukkit.getOfflinePlayer(UUID.fromString(ownerUuid)).getName());
                 territories.add(rowTerritory);
             }
             
-            final ChunkClaim claim = new ChunkClaim();
-            claim.csvRowIndex = index;
-            claim.x = chunkX;
-            claim.z = chunkZ;
-            rowTerritory.claims.add(claim);
+            final TerritoryChunkClaim claim = new TerritoryChunkClaim();
+            claim.setCsvRowIndex(index);
+            claim.setX(chunkX);
+            claim.setZ(chunkZ);
+            rowTerritory.getClaims().add(claim);
         }
     }
 
-    public Pair<String, String> getTerritoryFromChunk(int chunkX, int chunkZ) {
+    public Pair<String, String> getTerritoryOwnerFromChunk(int chunkX, int chunkZ) {
         Territory zoneOwner = territories.stream().filter(territory ->
-            territory.claims.stream().anyMatch(claim -> claim.x == chunkX && claim.z == chunkZ)
+            territory.getClaims().stream().anyMatch(claim -> claim.getX() == chunkX && claim.getZ() == chunkZ)
         ).findFirst().orElse(null);
 
         if (zoneOwner != null) {
-            return new Pair<>(zoneOwner.name, zoneOwner.ownerName);
+            return new Pair<>(zoneOwner.getName(), zoneOwner.getOwnerName());
         }
         return null;
     }
 
+    public Territory getTerritoryFromChunk(int chunkX, int chunkZ) {
+        return territories.stream().filter(territory ->
+            territory.getClaims().stream().anyMatch(claim -> claim.getX() == chunkX && claim.getZ() == chunkZ)
+        ).findFirst().orElse(null);
+    }
+
+    public Territory getTerritoryByName(String name) {
+        return territories.stream().filter(territory ->
+            territory.getName().equalsIgnoreCase(name)
+        ).findFirst().orElse(null);
+    }
+
     public void claimTerritory(int chunkX, int chunkZ, String playerUuid, String requestedTerritoryName) {
         // First, ensure this player can even claim territories in the first place
-        Territory playerTerritory = territories.stream().filter(territory -> territory.ownerUuid.equals(playerUuid)).findFirst().orElse(null);
+        Territory playerTerritory = territories.stream().filter(territory -> territory.getOwnerUuid().equals(playerUuid)).findFirst().orElse(null);
         int territoryLimit = plugin.getConfig().getInt("territory-limit");
-        if (playerTerritory != null && playerTerritory.claims.size() >= territoryLimit) {
+        if (playerTerritory != null && playerTerritory.getClaims().size() >= territoryLimit) {
             throw new TerritoryException("A maximum of " + territoryLimit + " territories can be claimed.");
         }
 
@@ -85,7 +99,7 @@ public class TerritoryData {
         }
 
         // Ensure territory name is unique
-        if (requestedTerritoryName != null && territories.stream().anyMatch(territory -> territory.name.equalsIgnoreCase(requestedTerritoryName))) {
+        if (requestedTerritoryName != null && territories.stream().anyMatch(territory -> territory.getName().equalsIgnoreCase(requestedTerritoryName))) {
             throw new TerritoryException("A territory already exists with that name.");
         }
 
@@ -95,17 +109,17 @@ public class TerritoryData {
 
         // Next, ensure the territory is up for grabs
         Territory zoneOwner = territories.stream().filter(territory ->
-            territory.claims.stream().anyMatch(claim -> claim.x == chunkX && claim.z == chunkZ)
+            territory.getClaims().stream().anyMatch(claim -> claim.getX() == chunkX && claim.getZ() == chunkZ)
         ).findFirst().orElse(null);
         if (zoneOwner != null) {
-            throw new TerritoryException("This zone is already owned by " + zoneOwner.name + ".");
+            throw new TerritoryException("This zone is already owned by " + zoneOwner.getName() + ".");
         }
 
         // Next, ensure that if we already have territory this chunk is adjacent
         if (
-            playerTerritory != null && !playerTerritory.claims.stream().anyMatch(claim ->
-                (Math.abs(claim.x - chunkX) == 1 && Math.abs(claim.z - chunkZ) == 0) ||
-                (Math.abs(claim.x - chunkX) == 0 && Math.abs(claim.z - chunkZ) == 1)
+            playerTerritory != null && !playerTerritory.getClaims().stream().anyMatch(claim ->
+                (Math.abs(claim.getX() - chunkX) == 1 && Math.abs(claim.getZ() - chunkZ) == 0) ||
+                (Math.abs(claim.getX() - chunkX) == 0 && Math.abs(claim.getZ() - chunkZ) == 1)
             )
         ) {
             throw new TerritoryException("New territory must be in an adjacent chunk to a chunk you already own.");
@@ -113,39 +127,27 @@ public class TerritoryData {
 
         if (playerTerritory == null) {
             playerTerritory = new Territory();
-            playerTerritory.name = requestedTerritoryName;
-            playerTerritory.ownerUuid = playerUuid;
-            playerTerritory.ownerName = Bukkit.getOfflinePlayer(UUID.fromString(playerUuid)).getName();
+            playerTerritory.setName(requestedTerritoryName);
+            playerTerritory.setOwnerUuid(playerUuid);
+            playerTerritory.setOwnerName(Bukkit.getOfflinePlayer(UUID.fromString(playerUuid)).getName());
             territories.add(playerTerritory);
         }
 
-        final ChunkClaim claim = new ChunkClaim();
-        claim.x = chunkX;
-        claim.z = chunkZ;
-        playerTerritory.claims.add(claim);
+        final TerritoryChunkClaim claim = new TerritoryChunkClaim();
+        claim.setX(chunkX);
+        claim.setZ(chunkZ);
+        playerTerritory.getClaims().add(claim);
 
         final CsvRow row = loader.newRow();
-        claim.csvRowIndex = row.getOriginalIndex();
+        claim.setCsvRowIndex(row.getOriginalIndex());
 
-        row.setValue("chunkX", claim.x + "");
-        row.setValue("chunkZ", claim.z + "");
-        row.setValue("territory", playerTerritory.name);
-        row.setValue("ownerUuid", playerTerritory.ownerUuid);
+        row.setValue("chunkX", claim.getX() + "");
+        row.setValue("chunkZ", claim.getZ() + "");
+        row.setValue("territory", playerTerritory.getName());
+        row.setValue("ownerUuid", playerTerritory.getOwnerUuid());
     }
 
     public void save() throws IOException {
         loader.save();
-    }
-
-    private class Territory {
-        private String name;
-        private String ownerName;
-        private String ownerUuid;
-        private ArrayList<ChunkClaim> claims = new ArrayList<>();
-    }
-    private class ChunkClaim {
-        private int csvRowIndex;
-        private int x;
-        private int z;
     }
 }

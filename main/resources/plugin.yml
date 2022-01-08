@@ -1,7 +1,7 @@
 name: HuntersMC
 version: 0.1.0
 main: com.gabler.huntersmc.HuntersMcPlugin
-description: Simple plugin for hunting down other players for PvP.
+description: PvP plugin for managing territories and wars between territories.
 authors:
   - AndyTheBrick
 commands:
@@ -13,3 +13,11 @@ commands:
     description: Attempt to claim territory you are in.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage: /claim <territory name [if first time]>"
+  guard:
+    description: Spawn a guard to protect your territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage: /guard <type, see guardtypes command>"
+  guardtypes:
+    description: Display guard types and their details.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage: /guardtypes <page number>"

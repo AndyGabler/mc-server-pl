@@ -1,6 +1,6 @@
 package com.gabler.huntersmc.handlers;
 
-import com.gabler.huntersmc.context.TerritoryData;
+import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.util.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class PlayerMovementHandler implements Listener {
             return;
         }
 
-        final Pair<String, String> territory = territoryData.getTerritoryFromChunk(newChunkX, newChunkZ);
+        final Pair<String, String> territory = territoryData.getTerritoryOwnerFromChunk(newChunkX, newChunkZ);
         final Player player = event.getPlayer();
         final String uuid = player.getUniqueId().toString();
         final String previousChunkTerritory = currentTerritories.get(uuid);

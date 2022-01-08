@@ -1,2 +1,3 @@
 territory-data-loc: territory.csv
 territory-limit: 15
+guard-data-loc: guards.csv
