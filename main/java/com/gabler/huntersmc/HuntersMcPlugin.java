@@ -24,7 +24,7 @@ public class HuntersMcPlugin extends JavaPlugin {
             territoryData = new TerritoryData(this);
             guardData = new GuardData(this, territoryData);
         } catch (Exception exception) {
-            getLogger().severe("Disabling HuntersMC program due to load failure." + exception);
+            getLogger().severe("Disabling HuntersMC plugin due to load failure." + exception);
             exception.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this);
             return;

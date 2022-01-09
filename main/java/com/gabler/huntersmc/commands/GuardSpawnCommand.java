@@ -4,6 +4,7 @@ import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.guard.model.GuardType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.context.territory.model.Territory;
+import com.gabler.huntersmc.util.GuardException;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
@@ -13,6 +14,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTables;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GuardSpawnCommand implements CommandExecutor {
 
@@ -50,21 +54,36 @@ public class GuardSpawnCommand implements CommandExecutor {
             return true;
         }
 
-        // TODO ensure some kind of cap system?
-
         Mob guard = spawnMobForGuardType(guardType, player);
         guard.setCustomName(ChatColor.COLOR_CHAR + "6" + currentTerritory.getName() + " Guard");
         guard.setRemoveWhenFarAway(false);
         guard.setAware(false);
         guard.setLootTable(LootTables.EMPTY.getLootTable());
+        //guard.damage();
 
-        // TODO save guard to some kind of database
-
-        /*IronGolem golem = (IronGolem) player.getWorld().spawnEntity(player.getLocation(), EntityType.IRON_GOLEM);
-        golem.setCustomName(ChatColor.COLOR_CHAR + "4" + currentTerritory.getName() + " Rebel");
-        golem.setAware(false);
-        golem.setTarget(player);
-        golem.setAware(true);*/
+        try {
+            guardData.registerGuard(
+                currentTerritory,
+                guardType,
+                guard.getUniqueId().toString(),
+                player.getLocation().getChunk().getX(),
+                player.getLocation().getChunk().getZ()
+            );
+            guardData.save();
+        } catch (GuardException exception) {
+            guard.damage(9999999999.0);
+            sender.sendMessage(ChatColor.COLOR_CHAR + "c" + exception.getMessage());
+            return true;
+        } catch (Exception exception) {
+            guard.damage(9999999999.0);
+            exception.printStackTrace();
+            sender.sendMessage(
+                ChatColor.COLOR_CHAR +
+                "4Unknown error occurred. Please report timestamp to admin: " +
+                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date())
+            );
+            return true;
+        }
 
         player.sendMessage("Guard spawned with UUID " + guard.getUniqueId());
         return true;

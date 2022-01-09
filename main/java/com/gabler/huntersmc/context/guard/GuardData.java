@@ -8,6 +8,7 @@ import com.gabler.huntersmc.context.territory.model.TerritoryChunkClaim;
 import com.gabler.huntersmc.util.CsvDataIntegrityException;
 import com.gabler.huntersmc.util.CsvLoader;
 import com.gabler.huntersmc.util.CsvRow;
+import com.gabler.huntersmc.util.GuardException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -19,6 +20,8 @@ public class GuardData {
     private final ArrayList<Guard> guards = new ArrayList<>();
     private final CsvLoader loader;
     private final JavaPlugin plugin;
+
+    private int idCounter = 0;
 
     public GuardData(JavaPlugin plugin, TerritoryData territoryData) throws IOException, CsvDataIntegrityException {
         this.plugin = plugin;
@@ -49,6 +52,8 @@ public class GuardData {
                 throw new CsvDataIntegrityException("Guard home chunk of (" + chunkX + ", " + chunkZ + ") does not belong to territory \"" + territory.getName() + "\".");
             }
 
+            idCounter = Math.max(id, idCounter);
+
             final Guard guard = new Guard();
             guard.setCsvRowIndex(index);
             guard.setEntityUuid(entityUuid);
@@ -60,8 +65,38 @@ public class GuardData {
         }
     }
 
-    public void registerGuard() {
-        // TODO
+    public void registerGuard(
+        Territory territory,
+        GuardType guardType,
+        String entityUuid,
+        int chunkX,
+        int chunkZ
+    ) {
+        idCounter++; // TODO synchronize? Maybe validate? Cap system?
+        final Guard guard = new Guard();
+        guard.setId(idCounter);
+        guard.setType(guardType);
+        guard.setOwner(territory);
+        guard.setEntityUuid(entityUuid);
+        guard.setHome(territory.getClaims().stream().filter(claim ->
+            claim.getX() == chunkX && claim.getZ() == chunkZ
+        ).findFirst().orElse(null));
+
+        if (guard.getHome() == null) {
+            throw new GuardException("Chunk given for guard registration does not belong to selected territory.");
+        }
+
+        final CsvRow row = loader.newRow();
+        guard.setCsvRowIndex(row.getOriginalIndex());
+
+        row.setValue("id", guard.getId() + "");
+        row.setValue("entityUuid", guard.getEntityUuid());
+        row.setValue("guardType", guard.getType().getId() + "");
+        row.setValue("territory", guard.getOwner().getName());
+        row.setValue("homeChunkX", chunkX + "");
+        row.setValue("homeChunkZ", chunkZ + "");
+
+        guards.add(guard);
     }
 
     public void save() throws IOException {

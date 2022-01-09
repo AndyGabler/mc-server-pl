@@ -34,7 +34,7 @@ public enum GuardType {
     public static GuardType forAlias(String alias) {
         return Arrays.stream(GuardType.values()).filter(type ->
             type.aliases.stream().anyMatch(typeAlias -> typeAlias.equalsIgnoreCase(alias))
-        ).findFirst().get();
+        ).findFirst().orElse(null);
     }
 
     public static GuardType forId(int id) {
