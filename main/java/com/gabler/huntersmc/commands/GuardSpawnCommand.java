@@ -55,11 +55,9 @@ public class GuardSpawnCommand implements CommandExecutor {
         }
 
         Mob guard = spawnMobForGuardType(guardType, player);
-        guard.setCustomName(ChatColor.COLOR_CHAR + "6" + currentTerritory.getName() + " Guard");
+        guard.setCustomName(ChatColor.COLOR_CHAR + "6" + currentTerritory.getName() + " " + guardType.getSimpleName());
         guard.setRemoveWhenFarAway(false);
-        guard.setAware(false);
         guard.setLootTable(LootTables.EMPTY.getLootTable());
-        //guard.damage();
 
         try {
             guardData.registerGuard(
@@ -85,11 +83,24 @@ public class GuardSpawnCommand implements CommandExecutor {
             return true;
         }
 
-        player.sendMessage("Guard spawned with UUID " + guard.getUniqueId());
+        player.sendMessage(ChatColor.COLOR_CHAR + "a" + guardType.getSimpleName() + " will now protect " + currentTerritory.getName() + ".");
         return true;
     }
 
     private Mob spawnMobForGuardType(GuardType guardType, Player player) {
-        return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON);
+        switch (guardType) {
+            case RANGER:
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON);
+            case PATROL:
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON);
+            case BRUISER:
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.IRON_GOLEM);
+            case HOUND:
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.RAVAGER);
+            default:
+                player.sendMessage(ChatColor.COLOR_CHAR + "4Plugin misconfigured. No spawner for entity type.");
+                // Will result in NPE but this is fine.
+                return null;
+        }
     }
 }

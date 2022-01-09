@@ -56,5 +56,7 @@ public class PlayerMovementHandler implements Listener {
                 );
             }
         }
+
+        // TODO manual targeting for normally benign guards
     }
 }

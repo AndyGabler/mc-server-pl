@@ -13,11 +13,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class GuardData {
 
     private final ArrayList<Guard> guards = new ArrayList<>();
+    private final HashSet<String> guardUuidCache = new HashSet<>();
     private final CsvLoader loader;
     private final JavaPlugin plugin;
 
@@ -61,6 +63,7 @@ public class GuardData {
             guard.setId(id);
             guard.setOwner(territory);
             guard.setType(guardType);
+            guardUuidCache.add(entityUuid);
             guards.add(guard);
         }
     }
@@ -96,7 +99,12 @@ public class GuardData {
         row.setValue("homeChunkX", chunkX + "");
         row.setValue("homeChunkZ", chunkZ + "");
 
+        guardUuidCache.add(entityUuid);
         guards.add(guard);
+    }
+
+    public boolean entityIsGuard(String uuid) {
+        return guardUuidCache.contains(uuid);
     }
 
     public void save() throws IOException {

@@ -4,18 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum GuardType {
-    MELEE_GUARD("melee", 0, "Melee guard.", "wither"),
-    PROTO_0("proto0", 1, "Prototype filler 0."),
-    PROTO_1("proto1", 2, "Prototype filler 1."),
-    PROTO_2("proto2", 3, "Prototype filler 2."),
-    PROTO_3("proto3", 4, "Prototype filler 3."),
-    PROTO_4("proto4", 5, "Prototype filler 4."),
-    PROTO_5("proto5", 6, "Prototype filler 5."),
-    PROTO_6("proto6", 7, "Prototype filler 6."),
-    PROTO_7("proto7", 8, "Prototype filler 7."),
-    PROTO_8("proto8", 9, "Prototype filler 8."),
-    PROTO_9("proto9", 10, "Prototype filler 9.");
-
+    PATROL("Patrol", 0, "Melee guard.", "wither"),
+    BRUISER("Bruiser", 1, "Heavy duty guard.", "heavy", "golem"),
+    RANGER("Ranger", 2, "Ranged guard.", "skelie", "skeleton"),
+    HOUND("Hound", 3, "Territory attack dog.", "ravager");
 
     private String simpleName;
     private int id;
