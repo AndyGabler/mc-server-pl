@@ -29,4 +29,8 @@ public class CsvRow {
     public void setValue(String columnName, String value) {
         loader.setRowValue(this, columnName, value);
     }
+
+    public void delete() {
+        loader.deleteRow(this);
+    }
 }

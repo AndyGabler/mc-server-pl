@@ -57,7 +57,6 @@ public class GuardData {
             idCounter = Math.max(id, idCounter);
 
             final Guard guard = new Guard();
-            guard.setCsvRowIndex(index);
             guard.setEntityUuid(entityUuid);
             guard.setHome(chunkClaim);
             guard.setId(id);
@@ -90,7 +89,6 @@ public class GuardData {
         }
 
         final CsvRow row = loader.newRow();
-        guard.setCsvRowIndex(row.getOriginalIndex());
 
         row.setValue("id", guard.getId() + "");
         row.setValue("entityUuid", guard.getEntityUuid());
@@ -101,6 +99,22 @@ public class GuardData {
 
         guardUuidCache.add(entityUuid);
         guards.add(guard);
+    }
+
+    public void deleteGuard(Guard guard) {
+        final CsvRow row = loader.getRowByCriteria(candidateRow -> Integer.parseInt(candidateRow.getValue("id")) == guard.getId());
+        if (row != null) {
+            row.delete();
+        }
+
+        guardUuidCache.remove(guard.getEntityUuid());
+
+        // Makes sure we are able to delete copies
+        guards.removeIf(globalGuard -> globalGuard.getId() == guard.getId());
+    }
+
+    public Guard guardForUuid(String uuid) {
+        return guards.stream().filter(guard -> guard.getEntityUuid().equalsIgnoreCase(uuid)).findFirst().orElse(null);
     }
 
     public boolean entityIsGuard(String uuid) {

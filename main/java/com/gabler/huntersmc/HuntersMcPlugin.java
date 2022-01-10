@@ -6,6 +6,7 @@ import com.gabler.huntersmc.commands.HuntCommand;
 import com.gabler.huntersmc.commands.TerritoryClaimCommand;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.territory.TerritoryData;
+import com.gabler.huntersmc.handlers.EntityDeathHandler;
 import com.gabler.huntersmc.handlers.EntityTargetHandler;
 import com.gabler.huntersmc.handlers.PlayerMovementHandler;
 import org.bukkit.Bukkit;
@@ -38,20 +39,26 @@ public class HuntersMcPlugin extends JavaPlugin {
         getCommand("guardtypes").setExecutor(new GuardTypesCommand());
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(guardData), this);
+        getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
 
         getLogger().info("HuntersMC plugin has been enabled.");
     }
+
     @Override
     public void onDisable() {
         getLogger().info("HuntersMC plugin disabled.");
 
         getLogger().info("Attempting to save HuntersMC data....");
         try {
-            // TODO save in one is catastrophic to dependencies
-            territoryData.save();
-            guardData.save();
+            doSave();
         } catch (Exception exception) {
             getLogger().severe("HuntersMC data failed to save!");
         }
+    }
+
+    public void doSave() throws Exception {
+        // TODO save in one is catastrophic to dependencies
+        territoryData.save();
+        guardData.save();
     }
 }

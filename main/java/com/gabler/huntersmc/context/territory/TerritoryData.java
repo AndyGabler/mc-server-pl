@@ -53,7 +53,6 @@ public class TerritoryData {
             }
             
             final TerritoryChunkClaim claim = new TerritoryChunkClaim();
-            claim.setCsvRowIndex(index);
             claim.setX(chunkX);
             claim.setZ(chunkZ);
             rowTerritory.getClaims().add(claim);
@@ -139,7 +138,6 @@ public class TerritoryData {
         playerTerritory.getClaims().add(claim);
 
         final CsvRow row = loader.newRow();
-        claim.setCsvRowIndex(row.getOriginalIndex());
 
         row.setValue("chunkX", claim.getX() + "");
         row.setValue("chunkZ", claim.getZ() + "");

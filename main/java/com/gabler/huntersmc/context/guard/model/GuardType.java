@@ -5,9 +5,10 @@ import java.util.Arrays;
 
 public enum GuardType {
     PATROL("Patrol", 0, "Melee guard.", "wither"),
-    BRUISER("Bruiser", 1, "Heavy duty guard.", "heavy", "golem"),
+    BRUTE("Brute", 1, "Brute guard.", "heavy", "golem"),
     RANGER("Ranger", 2, "Ranged guard.", "skelie", "skeleton"),
-    HOUND("Hound", 3, "Territory attack dog.", "ravager");
+    HOUND("Hound", 3, "Territory attack dog.", "ravager"),
+    BRUISER("Bruiser", 4, "Guard that packs a punch.", "vindicator");
 
     private String simpleName;
     private int id;

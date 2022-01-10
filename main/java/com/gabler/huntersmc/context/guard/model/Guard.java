@@ -10,9 +10,6 @@ public class Guard {
     private Territory owner;
     private TerritoryChunkClaim home;
 
-    // Callback for quick save
-    private int csvRowIndex;
-
     public int getId() {
         return id;
     }
@@ -51,13 +48,5 @@ public class Guard {
 
     public void setHome(TerritoryChunkClaim home) {
         this.home = home;
-    }
-
-    public int getCsvRowIndex() {
-        return csvRowIndex;
-    }
-
-    public void setCsvRowIndex(int csvRowIndex) {
-        this.csvRowIndex = csvRowIndex;
     }
 }

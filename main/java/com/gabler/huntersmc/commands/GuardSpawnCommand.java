@@ -93,10 +93,12 @@ public class GuardSpawnCommand implements CommandExecutor {
                 return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON);
             case PATROL:
                 return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON);
-            case BRUISER:
+            case BRUTE:
                 return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.IRON_GOLEM);
             case HOUND:
                 return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.RAVAGER);
+            case BRUISER:
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.PILLAGER);
             default:
                 player.sendMessage(ChatColor.COLOR_CHAR + "4Plugin misconfigured. No spawner for entity type.");
                 // Will result in NPE but this is fine.

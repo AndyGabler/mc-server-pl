@@ -1,3 +1,4 @@
+#https://bukkit.fandom.com/wiki/Plugin_YAML
 name: HuntersMC
 version: 0.1.0
 main: com.gabler.huntersmc.HuntersMcPlugin
@@ -21,3 +22,15 @@ commands:
     description: Display guard types and their details.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage: /guardtypes <page number>"
+  hmcsave:
+    description: Force a save of HuntersMC data.
+    permission-message: You do not have permission to do this.
+    usage: "Usage: /hmcsave"
+    permission: huntersmc.forcesave
+permissions:
+  huntersmc.*:
+    description: Catchall for the HuntersMC plugin.
+    children:
+      huntersmc.forcesave: true
+  huntersmc.forcesave:
+    description: Ability to forcesave HuntersMC data.
