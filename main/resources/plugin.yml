@@ -27,10 +27,34 @@ commands:
     permission-message: You do not have permission to do this.
     usage: "Usage: /hmcsave"
     permission: huntersmc.forcesave
+  hmcguardspawn:
+    description: Ensure that all guards that are supposed to exist are spawned.
+    permission-message: You do not have permission to do this.
+    usage: "Usage /hmcguardspawn <id0> <id1> ... <id#>"
+    permisison: huntersmc.respawn
+  guardlist:
+    description: Get list of all guards.
+    permission-message: You do not have permission to do this. Consider /myguards
+    usage: "Usage /guardlist <page number>"
+    permission: huntersmc.metrics
+  myguards:
+    description: List out all guards you have on your territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /myguards"
 permissions:
   huntersmc.*:
     description: Catchall for the HuntersMC plugin.
     children:
+      huntersmc.maintainence: true
+  huntersmc.maintainence:
+    description: Maintainence controls for the HuntersMC plugin.
+    children:
       huntersmc.forcesave: true
+      huntersmc.respawn: true
+      huntersmc.metrics: true
+  huntersmc.metrics:
+    description: Metrics for the HuntersMC plugin.
   huntersmc.forcesave:
     description: Ability to forcesave HuntersMC data.
+  huntersmc.guardrespawn:
+    description: Ability to force respawns of all despawned guards.

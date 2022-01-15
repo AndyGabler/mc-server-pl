@@ -4,6 +4,7 @@ import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +39,11 @@ public class TerritoryClaimCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cOnly players can secure territory.");
             return true;
         }
+        if (((Player) sender).getLocation().getWorld().getEnvironment() != World.Environment.NORMAL) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cCan only claim territory in the overworld.");
+            return true;
+        }
+
         Chunk chunk = ((Player) sender).getLocation().getChunk();
 
         try {

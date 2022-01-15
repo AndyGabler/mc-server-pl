@@ -1,11 +1,11 @@
 package com.gabler.huntersmc.handlers;
 
 import com.gabler.huntersmc.context.guard.GuardData;
-import com.gabler.huntersmc.context.guard.model.GuardType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.context.territory.model.Territory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class PlayerMovementHandler implements Listener {
         final int originalChunkX = event.getFrom().getChunk().getX();
         final int originalChunkZ = event.getFrom().getChunk().getZ();
 
-        if (event.getTo() == null) {
+        if (event.getTo() == null || event.getTo().getWorld().getEnvironment() != World.Environment.NORMAL) {
             return;
         }
 
@@ -45,7 +45,11 @@ public class PlayerMovementHandler implements Listener {
         if (territory != null && !territory.getOwnerUuid().equalsIgnoreCase(event.getPlayer().getUniqueId().toString())) {
             // TODO range throttle? maybe not all aggro at the same time
             guardData.getGuards().forEach(guard -> {
-                if (!guard.getType().isNaturallyHostile()) {
+                if (
+                    !guard.getType().isNaturallyHostile() &&
+                    !guard.getOwner().getName().equalsIgnoreCase(territory.getName()) &&
+                    !guard.getOwner().getOwnerUuid().equalsIgnoreCase(event.getPlayer().getUniqueId().toString())
+                ) {
                     final Entity guardEntity = Bukkit.getEntity(UUID.fromString(guard.getEntityUuid()));
                     if (guardEntity != null && guardEntity instanceof Mob) {
                         ((Mob)guardEntity).setTarget(event.getPlayer());

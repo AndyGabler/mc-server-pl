@@ -31,7 +31,7 @@ public class GuardData {
         final CsvLoader loader = new CsvLoader(plugin.getConfig().getString("guard-data-loc"));
         loader.ensureFileExists();
         loader.load();
-        loader.setMetaDataRow("id", "entityUuid", "guardType", "territory", "homeChunkX", "homeChunkZ");
+        loader.setMetaDataRow("id", "entityUuid", "guardType", "territory", "homeChunkX", "homeChunkZ", "homeX", "homeY", "homeZ");
         loader.save();
         this.loader = loader;
 
@@ -47,6 +47,9 @@ public class GuardData {
             }
             final int chunkX = Integer.parseInt(row.getValue("homeChunkX"));
             final int chunkZ = Integer.parseInt(row.getValue("homeChunkZ"));
+            final double homeX = Double.parseDouble(row.getValue("homeX"));
+            final double homeY = Double.parseDouble(row.getValue("homeY"));
+            final double homeZ = Double.parseDouble(row.getValue("homeZ"));
             final TerritoryChunkClaim chunkClaim = territory.getClaims().stream().filter(claim ->
                 claim.getX() == chunkX && claim.getZ() == chunkZ
             ).findFirst().orElse(null);
@@ -62,6 +65,9 @@ public class GuardData {
             guard.setId(id);
             guard.setOwner(territory);
             guard.setType(guardType);
+            guard.setHomeX(homeX);
+            guard.setHomeY(homeY);
+            guard.setHomeZ(homeZ);
             guardUuidCache.add(entityUuid);
             guards.add(guard);
         }
@@ -72,7 +78,10 @@ public class GuardData {
         GuardType guardType,
         String entityUuid,
         int chunkX,
-        int chunkZ
+        int chunkZ,
+        double homeX,
+        double homeY,
+        double homeZ
     ) {
         idCounter++; // TODO synchronize? Maybe validate? Cap system?
         final Guard guard = new Guard();
@@ -83,6 +92,9 @@ public class GuardData {
         guard.setHome(territory.getClaims().stream().filter(claim ->
             claim.getX() == chunkX && claim.getZ() == chunkZ
         ).findFirst().orElse(null));
+        guard.setHomeX(homeX);
+        guard.setHomeY(homeY);
+        guard.setHomeZ(homeZ);
 
         if (guard.getHome() == null) {
             throw new GuardException("Chunk given for guard registration does not belong to selected territory.");
@@ -96,6 +108,9 @@ public class GuardData {
         row.setValue("territory", guard.getOwner().getName());
         row.setValue("homeChunkX", chunkX + "");
         row.setValue("homeChunkZ", chunkZ + "");
+        row.setValue("homeX", homeX + "");
+        row.setValue("homeY", homeY + "");
+        row.setValue("homeZ", homeZ + "");
 
         guardUuidCache.add(entityUuid);
         guards.add(guard);
@@ -115,6 +130,17 @@ public class GuardData {
 
     public Guard guardForUuid(String uuid) {
         return guards.stream().filter(guard -> guard.getEntityUuid().equalsIgnoreCase(uuid)).findFirst().orElse(null);
+    }
+
+    public void changeGuardUuid(Guard guard, String newUuid) {
+        final CsvRow guardRow = loader.getRowByCriteria(row -> Integer.parseInt(row.getValue("id"))  == guard.getId());
+
+        if (guardRow == null) {
+            throw new IllegalStateException("No CSV row found for guard with ID " + guard.getId() + ".");
+        }
+
+        guard.setEntityUuid(newUuid);
+        guardRow.setValue("entityUuid", newUuid);
     }
 
     public List<Guard> getGuards() {

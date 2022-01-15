@@ -9,6 +9,9 @@ public class Guard {
     private GuardType type;
     private Territory owner;
     private TerritoryChunkClaim home;
+    private double homeX;
+    private double homeY;
+    private double homeZ;
 
     public int getId() {
         return id;
@@ -48,5 +51,29 @@ public class Guard {
 
     public void setHome(TerritoryChunkClaim home) {
         this.home = home;
+    }
+
+    public double getHomeX() {
+        return homeX;
+    }
+
+    public void setHomeX(double homeX) {
+        this.homeX = homeX;
+    }
+
+    public double getHomeY() {
+        return homeY;
+    }
+
+    public void setHomeY(double homeY) {
+        this.homeY = homeY;
+    }
+
+    public double getHomeZ() {
+        return homeZ;
+    }
+
+    public void setHomeZ(double homeZ) {
+        this.homeZ = homeZ;
     }
 }

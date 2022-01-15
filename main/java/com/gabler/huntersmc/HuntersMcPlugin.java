@@ -1,9 +1,12 @@
 package com.gabler.huntersmc;
 
+import com.gabler.huntersmc.commands.GuardListCommand;
+import com.gabler.huntersmc.commands.GuardRespawnCommand;
 import com.gabler.huntersmc.commands.GuardSpawnCommand;
 import com.gabler.huntersmc.commands.GuardTypesCommand;
 import com.gabler.huntersmc.commands.HuntCommand;
 import com.gabler.huntersmc.commands.HmcSaveCommand;
+import com.gabler.huntersmc.commands.MyGuardsCommand;
 import com.gabler.huntersmc.commands.TerritoryClaimCommand;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.territory.TerritoryData;
@@ -39,6 +42,9 @@ public class HuntersMcPlugin extends JavaPlugin {
         getCommand("guard").setExecutor(new GuardSpawnCommand(territoryData, guardData));
         getCommand("guardtypes").setExecutor(new GuardTypesCommand());
         getCommand("hmcsave").setExecutor(new HmcSaveCommand(this));
+        getCommand("hmcguardspawn").setExecutor(new GuardRespawnCommand(this, guardData));
+        getCommand("guardlist").setExecutor(new GuardListCommand(guardData));
+        getCommand("myguards").setExecutor(new MyGuardsCommand(territoryData, guardData));
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);

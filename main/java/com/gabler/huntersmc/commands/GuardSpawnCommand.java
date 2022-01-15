@@ -7,6 +7,7 @@ import com.gabler.huntersmc.context.territory.model.Territory;
 import com.gabler.huntersmc.util.GuardException;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -32,6 +33,11 @@ public class GuardSpawnCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cMust be a player to execute this command.");
+            return true;
+        }
+
+        if (((Player) sender).getLocation().getWorld().getEnvironment() != World.Environment.NORMAL) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cCan only guard in the overworld.");
             return true;
         }
 
@@ -65,7 +71,10 @@ public class GuardSpawnCommand implements CommandExecutor {
                 guardType,
                 guard.getUniqueId().toString(),
                 player.getLocation().getChunk().getX(),
-                player.getLocation().getChunk().getZ()
+                player.getLocation().getChunk().getZ(),
+                player.getLocation().getX(),
+                player.getLocation().getY(),
+                player.getLocation().getZ()
             );
             guardData.save();
         } catch (GuardException exception) {
@@ -90,15 +99,15 @@ public class GuardSpawnCommand implements CommandExecutor {
     private Mob spawnMobForGuardType(GuardType guardType, Player player) {
         switch (guardType) {
             case RANGER:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON);
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON, false);
             case PATROL:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON);
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON, false);
             case BRUTE:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.IRON_GOLEM);
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.IRON_GOLEM, false);
             case HOUND:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.RAVAGER);
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.RAVAGER, false);
             case BRUISER:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.PILLAGER);
+                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.PILLAGER, false);
             default:
                 player.sendMessage(ChatColor.COLOR_CHAR + "4Plugin misconfigured. No spawner for entity type.");
                 // Will result in NPE but this is fine.
