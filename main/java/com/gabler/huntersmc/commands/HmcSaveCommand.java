@@ -23,6 +23,7 @@ public class HmcSaveCommand implements CommandExecutor {
             try {
                 plugin.doSave();
                 sender.sendMessage(ChatColor.COLOR_CHAR + "aForce save of HuntersMC data successful.");
+                plugin.getLogger().info("Force save of HuntersMC data completed successfully.");
             } catch (Exception exception) {
                 plugin.getLogger().severe("Failed to save HuntersMC data ");
                 exception.printStackTrace();

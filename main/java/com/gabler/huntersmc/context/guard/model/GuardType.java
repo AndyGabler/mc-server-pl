@@ -49,4 +49,8 @@ public enum GuardType {
     public ArrayList<String> getAliases() {
         return new ArrayList<>(aliases);
     }
+
+    public boolean isNaturallyHostile() {
+        return this != BRUTE;
+    }
 }

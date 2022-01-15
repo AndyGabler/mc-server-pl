@@ -117,6 +117,10 @@ public class GuardData {
         return guards.stream().filter(guard -> guard.getEntityUuid().equalsIgnoreCase(uuid)).findFirst().orElse(null);
     }
 
+    public List<Guard> getGuards() {
+        return guards;
+    }
+
     public boolean entityIsGuard(String uuid) {
         return guardUuidCache.contains(uuid);
     }

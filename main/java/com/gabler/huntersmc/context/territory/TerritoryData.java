@@ -5,7 +5,6 @@ import com.gabler.huntersmc.context.territory.model.TerritoryChunkClaim;
 import com.gabler.huntersmc.util.CsvDataIntegrityException;
 import com.gabler.huntersmc.util.CsvLoader;
 import com.gabler.huntersmc.util.CsvRow;
-import com.gabler.huntersmc.util.Pair;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,17 +58,6 @@ public class TerritoryData {
         }
     }
 
-    public Pair<String, String> getTerritoryOwnerFromChunk(int chunkX, int chunkZ) {
-        Territory zoneOwner = territories.stream().filter(territory ->
-            territory.getClaims().stream().anyMatch(claim -> claim.getX() == chunkX && claim.getZ() == chunkZ)
-        ).findFirst().orElse(null);
-
-        if (zoneOwner != null) {
-            return new Pair<>(zoneOwner.getName(), zoneOwner.getOwnerName());
-        }
-        return null;
-    }
-
     public Territory getTerritoryFromChunk(int chunkX, int chunkZ) {
         return territories.stream().filter(territory ->
             territory.getClaims().stream().anyMatch(claim -> claim.getX() == chunkX && claim.getZ() == chunkZ)
@@ -79,6 +67,12 @@ public class TerritoryData {
     public Territory getTerritoryByName(String name) {
         return territories.stream().filter(territory ->
             territory.getName().equalsIgnoreCase(name)
+        ).findFirst().orElse(null);
+    }
+
+    public Territory getTerritoryByOwnerUuid(String uuid) {
+        return territories.stream().filter(territory ->
+            territory.getOwnerUuid().equalsIgnoreCase(uuid)
         ).findFirst().orElse(null);
     }
 
