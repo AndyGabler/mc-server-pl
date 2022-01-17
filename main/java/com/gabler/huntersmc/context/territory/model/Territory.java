@@ -1,7 +1,5 @@
 package com.gabler.huntersmc.context.territory.model;
 
-import com.gabler.huntersmc.context.territory.TerritoryData;
-
 import java.util.ArrayList;
 
 public class Territory {
@@ -9,6 +7,7 @@ public class Territory {
     private String ownerName;
     private String ownerUuid;
     private ArrayList<TerritoryChunkClaim> claims = new ArrayList<>();
+    private String color;
 
     public String getName() {
         return name;
@@ -40,5 +39,13 @@ public class Territory {
 
     public void setClaims(ArrayList<TerritoryChunkClaim> claims) {
         this.claims = claims;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

@@ -60,8 +60,9 @@ public class GuardSpawnCommand implements CommandExecutor {
             return true;
         }
 
-        Mob guard = spawnMobForGuardType(guardType, player);
-        guard.setCustomName(ChatColor.COLOR_CHAR + "6" + currentTerritory.getName() + " " + guardType.getSimpleName());
+        final String colorCode = TerritoryData.getColorCodeForTerritory(currentTerritory);
+        final Mob guard = spawnMobForGuardType(guardType, player);
+        guard.setCustomName(colorCode + currentTerritory.getName() + " " + guardType.getSimpleName());
         guard.setRemoveWhenFarAway(false);
         guard.setLootTable(LootTables.EMPTY.getLootTable());
 

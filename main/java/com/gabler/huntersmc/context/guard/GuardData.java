@@ -21,12 +21,10 @@ public class GuardData {
     private final ArrayList<Guard> guards = new ArrayList<>();
     private final HashSet<String> guardUuidCache = new HashSet<>();
     private final CsvLoader loader;
-    private final JavaPlugin plugin;
 
     private int idCounter = 0;
 
     public GuardData(JavaPlugin plugin, TerritoryData territoryData) throws IOException, CsvDataIntegrityException {
-        this.plugin = plugin;
 
         final CsvLoader loader = new CsvLoader(plugin.getConfig().getString("guard-data-loc"));
         loader.ensureFileExists();

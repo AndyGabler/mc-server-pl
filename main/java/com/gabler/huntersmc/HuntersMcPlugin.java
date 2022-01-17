@@ -9,9 +9,11 @@ import com.gabler.huntersmc.commands.HmcSaveCommand;
 import com.gabler.huntersmc.commands.MyGuardsCommand;
 import com.gabler.huntersmc.commands.TerritoryClaimCommand;
 import com.gabler.huntersmc.context.guard.GuardData;
+import com.gabler.huntersmc.context.relationship.RelationshipData;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.handlers.EntityDeathHandler;
 import com.gabler.huntersmc.handlers.EntityTargetHandler;
+import com.gabler.huntersmc.handlers.PlayerChatHandler;
 import com.gabler.huntersmc.handlers.PlayerMovementHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +22,7 @@ public class HuntersMcPlugin extends JavaPlugin {
 
     private TerritoryData territoryData = null;
     private GuardData guardData = null;
+    private RelationshipData relationshipData = null;
 
     @Override
     public void onEnable() {
@@ -29,6 +32,7 @@ public class HuntersMcPlugin extends JavaPlugin {
         try {
             territoryData = new TerritoryData(this);
             guardData = new GuardData(this, territoryData);
+            relationshipData = new RelationshipData(this, territoryData);
         } catch (Exception exception) {
             getLogger().severe("Disabling HuntersMC plugin due to load failure." + exception);
             exception.printStackTrace();
@@ -48,6 +52,7 @@ public class HuntersMcPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
+        getServer().getPluginManager().registerEvents(new PlayerChatHandler(territoryData), this);
 
         getLogger().info("HuntersMC plugin has been enabled.");
     }
@@ -68,5 +73,6 @@ public class HuntersMcPlugin extends JavaPlugin {
         // TODO save in one is catastrophic to dependencies
         territoryData.save();
         guardData.save();
+        relationshipData.save();
     }
 }

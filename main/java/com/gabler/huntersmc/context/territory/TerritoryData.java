@@ -7,14 +7,18 @@ import com.gabler.huntersmc.util.CsvLoader;
 import com.gabler.huntersmc.util.CsvRow;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class TerritoryData {
+
+    private static final int COLOR_COUNT = 8;
 
     private final ArrayList<Territory> territories = new ArrayList<>();
     private final CsvLoader loader;
@@ -26,31 +30,32 @@ public class TerritoryData {
         final CsvLoader loader = new CsvLoader(plugin.getConfig().getString("territory-data-loc"));
         loader.ensureFileExists();
         loader.load();
-        loader.setMetaDataRow("chunkX", "chunkZ", "territory", "ownerUuid");
+        loader.setMetaDataRow("chunkX", "chunkZ", "territory", "ownerUuid", "color");
         loader.save();
         this.loader = loader;
 
         List<CsvRow> rows = loader.getRows();
-        for (int index = 0; index < rows.size(); index++) {
-            final CsvRow row = rows.get(index);
+        for (final CsvRow row : rows) {
             final String territoryName = row.getValue("territory");
             final String ownerUuid = row.getValue("ownerUuid");
             final int chunkX = Integer.parseInt(row.getValue("chunkX"));
             final int chunkZ = Integer.parseInt(row.getValue("chunkZ"));
+            final String color = row.getValue("color");
 
             Territory rowTerritory = territories
-                .stream()
-                .filter(territory -> territory.getName().equalsIgnoreCase(territoryName))
-                .findFirst().orElse(null);
+                    .stream()
+                    .filter(territory -> territory.getName().equalsIgnoreCase(territoryName))
+                    .findFirst().orElse(null);
 
             if (rowTerritory == null) {
                 rowTerritory = new Territory();
                 rowTerritory.setName(territoryName);
                 rowTerritory.setOwnerUuid(ownerUuid);
                 rowTerritory.setOwnerName(Bukkit.getOfflinePlayer(UUID.fromString(ownerUuid)).getName());
+                rowTerritory.setColor(color);
                 territories.add(rowTerritory);
             }
-            
+
             final TerritoryChunkClaim claim = new TerritoryChunkClaim();
             claim.setX(chunkX);
             claim.setZ(chunkZ);
@@ -74,6 +79,56 @@ public class TerritoryData {
         return territories.stream().filter(territory ->
             territory.getOwnerUuid().equalsIgnoreCase(uuid)
         ).findFirst().orElse(null);
+    }
+
+    public static String getColorCodeForTerritory(Territory territory) {
+        return ChatColor.COLOR_CHAR + colorCodeForColor(territory.getColor());
+    }
+
+    private static String colorCodeForColor(String color) {
+        switch (color) {
+            case "YELLOW":
+                return "e";
+            case "BLUE":
+                return "9";
+            case "LIGHT PURPLE":
+                return "d";
+            case "GOLD":
+                return "6";
+            case "AQUA":
+                return "b";
+            case "DARK PURPLE":
+                return "5";
+            case "DARK BLUE":
+                return "1";
+            case "GRAY":
+                return "7";
+            default:
+                throw new IllegalArgumentException("Unknown color of \"" + color + "\".");
+        }
+    }
+
+    private static String colorForIndex(int index) {
+        switch (index) {
+            case 0:
+                return "YELLOW";
+            case 1:
+                return "BLUE";
+            case 2:
+                return "LIGHT PURPLE";
+            case 3:
+                return "GOLD";
+            case 4:
+                return "AQUA";
+            case 5:
+                return "DARK PURPLE";
+            case 6:
+                return "DARK BLUE";
+            case 7:
+                return "GRAY";
+            default:
+                throw new IllegalArgumentException("Unknown color index of " + index + ".");
+        }
     }
 
     public void claimTerritory(int chunkX, int chunkZ, String playerUuid, String requestedTerritoryName) {
@@ -110,7 +165,7 @@ public class TerritoryData {
 
         // Next, ensure that if we already have territory this chunk is adjacent
         if (
-            playerTerritory != null && !playerTerritory.getClaims().stream().anyMatch(claim ->
+            playerTerritory != null && playerTerritory.getClaims().stream().noneMatch(claim ->
                 (Math.abs(claim.getX() - chunkX) == 1 && Math.abs(claim.getZ() - chunkZ) == 0) ||
                 (Math.abs(claim.getX() - chunkX) == 0 && Math.abs(claim.getZ() - chunkZ) == 1)
             )
@@ -119,10 +174,13 @@ public class TerritoryData {
         }
 
         if (playerTerritory == null) {
+            final Random random = new Random();
+            final String color = colorForIndex(random.nextInt(COLOR_COUNT));
             playerTerritory = new Territory();
             playerTerritory.setName(requestedTerritoryName);
             playerTerritory.setOwnerUuid(playerUuid);
             playerTerritory.setOwnerName(Bukkit.getOfflinePlayer(UUID.fromString(playerUuid)).getName());
+            playerTerritory.setColor(color);
             territories.add(playerTerritory);
         }
 
@@ -132,11 +190,11 @@ public class TerritoryData {
         playerTerritory.getClaims().add(claim);
 
         final CsvRow row = loader.newRow();
-
         row.setValue("chunkX", claim.getX() + "");
         row.setValue("chunkZ", claim.getZ() + "");
         row.setValue("territory", playerTerritory.getName());
         row.setValue("ownerUuid", playerTerritory.getOwnerUuid());
+        row.setValue("color", playerTerritory.getColor());
     }
 
     public void save() throws IOException {

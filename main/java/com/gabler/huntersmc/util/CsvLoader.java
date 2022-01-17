@@ -148,7 +148,12 @@ public class CsvLoader {
         for (int rowIndex = 0; rowIndex < data.size(); rowIndex++) {
             ArrayList<String> row = data.get(rowIndex);
             for (int cellIndex = 0; cellIndex < row.size(); cellIndex++) {
-                builder.append(row.get(cellIndex));
+                final String cellData = row.get(cellIndex);
+                if (cellData != null) {
+                    builder.append(cellData);
+                } else {
+                    builder.append(NULL_CHARACTER);
+                }
 
                 if (cellIndex != row.size() - 1) {
                     builder.append(",");

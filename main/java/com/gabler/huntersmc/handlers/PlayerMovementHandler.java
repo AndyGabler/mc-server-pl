@@ -72,14 +72,14 @@ public class PlayerMovementHandler implements Listener {
             } else {
                 currentTerritories.put(uuid, territory.getName());
                 if (!territory.getName().equalsIgnoreCase(previousChunkTerritory)) {
+                    final String colorCode = TerritoryData.getColorCodeForTerritory(territory);
                     player.sendTitle(
-                        ChatColor.COLOR_CHAR + "l" +ChatColor.COLOR_CHAR + "6" + territory.getName(),
-                        ChatColor.COLOR_CHAR + "6" +"Owned by " + territory.getOwnerName(),
+                        ChatColor.COLOR_CHAR + "l" + colorCode + territory.getName(),
+                        colorCode +"Owned by " + territory.getOwnerName(),
                         10, 70, 20
                     );
                 }
             }
         }
-        // TODO manual targeting for normally benign guards
     }
 }

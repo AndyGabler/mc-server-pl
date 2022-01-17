@@ -3,6 +3,7 @@ package com.gabler.huntersmc.commands;
 import com.gabler.huntersmc.HuntersMcPlugin;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.guard.model.Guard;
+import com.gabler.huntersmc.context.territory.TerritoryData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -113,12 +114,13 @@ public class GuardRespawnCommand implements CommandExecutor {
                 return null;
         }
 
-        Mob guardMob = (Mob) world.spawnEntity(
+        final String colorCode = TerritoryData.getColorCodeForTerritory(guard.getOwner());
+        final Mob guardMob = (Mob) world.spawnEntity(
             new Location(world, guard.getHomeX(), guard.getHomeY(), guard.getHomeZ()),
             entityType,
             false
         );
-        guardMob.setCustomName(ChatColor.COLOR_CHAR + "6" + guard.getOwner().getName() + " " + guard.getType().getSimpleName());
+        guardMob.setCustomName(colorCode + guard.getOwner().getName() + " " + guard.getType().getSimpleName());
         guardMob.setRemoveWhenFarAway(false);
         guardMob.setLootTable(LootTables.EMPTY.getLootTable());
         return guardMob;
