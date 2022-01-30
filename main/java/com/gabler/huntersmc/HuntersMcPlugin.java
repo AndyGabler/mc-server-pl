@@ -9,6 +9,7 @@ import com.gabler.huntersmc.commands.HmcSaveCommand;
 import com.gabler.huntersmc.commands.MyGuardsCommand;
 import com.gabler.huntersmc.commands.RelationshipBreakCommand;
 import com.gabler.huntersmc.commands.RelationshipEstablishCommand;
+import com.gabler.huntersmc.commands.RelationshipTermsCommand;
 import com.gabler.huntersmc.commands.TerritoryClaimCommand;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
@@ -44,23 +45,30 @@ public class HuntersMcPlugin extends JavaPlugin {
         }
         getLogger().info("HuntersMC data loaded.");
 
+        // Maintainence Commands
+        getCommand("hmcsave").setExecutor(new HmcSaveCommand(this));
+        getCommand("hmcguardspawn").setExecutor(new GuardRespawnCommand(this, guardData));
+
+        // PvP Encourager Commands
         getCommand("hunt").setExecutor(new HuntCommand());
+
+        // Territory setup commands
         getCommand("claim").setExecutor(new TerritoryClaimCommand(territoryData));
         getCommand("guard").setExecutor(new GuardSpawnCommand(territoryData, guardData));
         getCommand("guardtypes").setExecutor(new GuardTypesCommand());
-        getCommand("hmcsave").setExecutor(new HmcSaveCommand(this));
-        getCommand("hmcguardspawn").setExecutor(new GuardRespawnCommand(this, guardData));
         getCommand("guardlist").setExecutor(new GuardListCommand(guardData));
         getCommand("myguards").setExecutor(new MyGuardsCommand(territoryData, guardData));
 
+        // Relationship commands
         getCommand("envoy").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.AMBASSADOR));
         getCommand("ally").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.ALLY));
         getCommand("declarewar").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.WAR));
-
         getCommand("eject").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.AMBASSADOR));
         getCommand("rejectalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.PENDING_ALLY));
         getCommand("breakalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.ALLY));
         getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
+        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
+        getCommand("terms").setExecutor(new RelationshipTermsCommand(territoryData, relationshipData));
 
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData), this);

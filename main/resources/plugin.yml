@@ -69,6 +69,10 @@ commands:
     description: Surrender your war with another territory.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage /surrender <territory name>"
+  terms:
+    description: See the terms you are on with another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /terms <territory name [optional]>"
 permissions:
   huntersmc.*:
     description: Catchall for the HuntersMC plugin.

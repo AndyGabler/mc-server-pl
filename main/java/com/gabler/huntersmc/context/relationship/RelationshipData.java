@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RelationshipData {
 
@@ -86,6 +87,13 @@ public class RelationshipData {
             (playerRelationship.getTerritory1() == territory1 && playerRelationship.getTerritory2() == territory2) ||
             (playerRelationship.getTerritory1() == territory2 && playerRelationship.getTerritory2() == territory1)
         ).findFirst().orElse(null);
+    }
+
+    public List<PlayerRelationship> getTerritoryRelationships(Territory territory) {
+        return relationships.stream().filter(relationship ->
+            relationship.getTerritory1().getName().equalsIgnoreCase(territory.getName()) ||
+            relationship.getTerritory2().getName().equalsIgnoreCase(territory.getName())
+        ).findFirst().stream().collect(Collectors.toList());
     }
 
     public RelationshipType getTerritoryRelationshipType(Territory territory1, Territory territory2) {
