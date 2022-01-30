@@ -1,5 +1,6 @@
 package com.gabler.huntersmc.commands;
 
+import com.gabler.huntersmc.commands.util.TerritoryInputUtil;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.ChatColor;
@@ -23,17 +24,7 @@ public class TerritoryClaimCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String territoryName = null;
-        if (args.length > 0) {
-            territoryName = "";
-            for (int index = 0; index < args.length; index++) {
-                if (index != 0) {
-                    territoryName += " ";
-                }
-
-                territoryName += args[index];
-            }
-        }
+        final String territoryName = TerritoryInputUtil.territoryNameFromArguments(args);
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cOnly players can secure territory.");

@@ -1,46 +1,30 @@
 package com.gabler.huntersmc.context.relationship.model;
 
+import com.gabler.huntersmc.context.territory.model.Territory;
 import java.util.Date;
 
 public class PlayerRelationship {
 
-    private String player1Uuid;
-    private String territoryName1;
-    private String player2Uuid;
-    private String territoryName2;
+    private Territory territory1;
+    private Territory territory2;
     private RelationshipType relationshipType;
     private Date expirationDate;
+    private Territory initiator;
 
-    public String getPlayer1Uuid() {
-        return player1Uuid;
+    public Territory getTerritory1() {
+        return territory1;
     }
 
-    public void setPlayer1Uuid(String player1Uuid) {
-        this.player1Uuid = player1Uuid;
+    public void setTerritory1(Territory territory1) {
+        this.territory1 = territory1;
     }
 
-    public String getTerritoryName1() {
-        return territoryName1;
+    public Territory getTerritory2() {
+        return territory2;
     }
 
-    public void setTerritoryName1(String territoryName1) {
-        this.territoryName1 = territoryName1;
-    }
-
-    public String getPlayer2Uuid() {
-        return player2Uuid;
-    }
-
-    public void setPlayer2Uuid(String player2Uuid) {
-        this.player2Uuid = player2Uuid;
-    }
-
-    public String getTerritoryName2() {
-        return territoryName2;
-    }
-
-    public void setTerritoryName2(String territoryName2) {
-        this.territoryName2 = territoryName2;
+    public void setTerritory2(Territory territory2) {
+        this.territory2 = territory2;
     }
 
     public RelationshipType getRelationshipType() {
@@ -57,5 +41,13 @@ public class PlayerRelationship {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public Territory getInitiator() {
+        return initiator;
+    }
+
+    public void setInitiator(Territory initiator) {
+        this.initiator = initiator;
     }
 }

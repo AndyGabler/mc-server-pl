@@ -9,7 +9,7 @@ commands:
   hunt:
     description: Reveal the location of another player and let them know you are tracking them.
     permission-message: Andy can't code so you don't have permission to this important command.
-    usage: "Usage: /hunt <playerName>"
+    usage: "Usage: /hunt <player name>"
   claim:
     description: Attempt to claim territory you are in.
     permission-message: Andy can't code so you don't have permission to this important command.
@@ -41,6 +41,34 @@ commands:
     description: List out all guards you have on your territory.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage /myguards"
+  envoy:
+    description: Invite a player into your territory as an ambassador.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /envoy <player name> <expiration time> <expiration units [Day, Hour, Minute]>"
+  eject:
+    description: Eject an ambassador from your territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /eject <player name>"
+  ally:
+    description: Ally with another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /ally <territory name> <offer expiration time> <expiration units [Day, Hour, Minute]>"
+  rejectalliance:
+    description: Reject alliance with another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /rejectalliance <territory name>"
+  breakalliance:
+    description: Break alliance with another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /breakalliance <territory name>"
+  declarewar:
+    description: Declare war on another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /declarewar <territory name>"
+  surrender:
+    description: Surrender your war with another territory.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /surrender <territory name>"
 permissions:
   huntersmc.*:
     description: Catchall for the HuntersMC plugin.

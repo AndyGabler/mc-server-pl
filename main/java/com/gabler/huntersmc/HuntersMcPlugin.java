@@ -7,9 +7,12 @@ import com.gabler.huntersmc.commands.GuardTypesCommand;
 import com.gabler.huntersmc.commands.HuntCommand;
 import com.gabler.huntersmc.commands.HmcSaveCommand;
 import com.gabler.huntersmc.commands.MyGuardsCommand;
+import com.gabler.huntersmc.commands.RelationshipBreakCommand;
+import com.gabler.huntersmc.commands.RelationshipEstablishCommand;
 import com.gabler.huntersmc.commands.TerritoryClaimCommand;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
+import com.gabler.huntersmc.context.relationship.model.RelationshipType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.handlers.EntityDeathHandler;
 import com.gabler.huntersmc.handlers.EntityTargetHandler;
@@ -49,6 +52,16 @@ public class HuntersMcPlugin extends JavaPlugin {
         getCommand("hmcguardspawn").setExecutor(new GuardRespawnCommand(this, guardData));
         getCommand("guardlist").setExecutor(new GuardListCommand(guardData));
         getCommand("myguards").setExecutor(new MyGuardsCommand(territoryData, guardData));
+
+        getCommand("envoy").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.AMBASSADOR));
+        getCommand("ally").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.ALLY));
+        getCommand("declarewar").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, RelationshipType.WAR));
+
+        getCommand("eject").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.AMBASSADOR));
+        getCommand("rejectalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.PENDING_ALLY));
+        getCommand("breakalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.ALLY));
+        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
+
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData), this);
         getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
@@ -66,6 +79,7 @@ public class HuntersMcPlugin extends JavaPlugin {
             doSave();
         } catch (Exception exception) {
             getLogger().severe("HuntersMC data failed to save!");
+            exception.printStackTrace();
         }
     }
 
