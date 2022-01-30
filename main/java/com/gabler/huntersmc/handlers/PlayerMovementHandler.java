@@ -1,8 +1,10 @@
 package com.gabler.huntersmc.handlers;
 
 import com.gabler.huntersmc.context.guard.GuardData;
+import com.gabler.huntersmc.context.relationship.RelationshipData;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.context.territory.model.Territory;
+import com.gabler.huntersmc.util.GuardAggroUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -20,11 +22,13 @@ public class PlayerMovementHandler implements Listener {
 
     private final TerritoryData territoryData;
     private final GuardData guardData;
+    private final RelationshipData relationshipData;
     private final HashMap<String, String> currentTerritories;
 
-    public PlayerMovementHandler(TerritoryData aTerritoryData, GuardData aGuardData) {
+    public PlayerMovementHandler(TerritoryData aTerritoryData, GuardData aGuardData, RelationshipData aRelationshipData) {
         this.territoryData = aTerritoryData;
         this.guardData = aGuardData;
+        this.relationshipData = aRelationshipData;
         currentTerritories = new HashMap<>();
     }
 
@@ -46,9 +50,12 @@ public class PlayerMovementHandler implements Listener {
             // TODO range throttle? maybe not all aggro at the same time
             guardData.getGuards().forEach(guard -> {
                 if (
+                    // Guard must be naturally in-hostile
                     !guard.getType().isNaturallyHostile() &&
+                    // Must have moved onto the guards territory
                     !guard.getOwner().getName().equalsIgnoreCase(territory.getName()) &&
-                    !guard.getOwner().getOwnerUuid().equalsIgnoreCase(event.getPlayer().getUniqueId().toString())
+                    // Guards shall not attack their master nor their allies
+                    !GuardAggroUtil.isGuardDiplomaticOrSubservient(event.getPlayer(), guard, territoryData, relationshipData)
                 ) {
                     final Entity guardEntity = Bukkit.getEntity(UUID.fromString(guard.getEntityUuid()));
                     if (guardEntity != null && guardEntity instanceof Mob) {

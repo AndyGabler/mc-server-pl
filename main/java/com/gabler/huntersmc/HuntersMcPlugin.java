@@ -45,7 +45,7 @@ public class HuntersMcPlugin extends JavaPlugin {
         }
         getLogger().info("HuntersMC data loaded.");
 
-        // Maintainence Commands
+        // Maintenance Commands
         getCommand("hmcsave").setExecutor(new HmcSaveCommand(this));
         getCommand("hmcguardspawn").setExecutor(new GuardRespawnCommand(this, guardData));
 
@@ -70,8 +70,9 @@ public class HuntersMcPlugin extends JavaPlugin {
         getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
         getCommand("terms").setExecutor(new RelationshipTermsCommand(territoryData, relationshipData));
 
-        getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData), this);
-        getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData), this);
+        // Event Listeners
+        getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData, relationshipData), this);
+        getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData, relationshipData), this);
         getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
         getServer().getPluginManager().registerEvents(new PlayerChatHandler(territoryData), this);
 

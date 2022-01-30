@@ -77,8 +77,8 @@ permissions:
   huntersmc.*:
     description: Catchall for the HuntersMC plugin.
     children:
-      huntersmc.maintainence: true
-  huntersmc.maintainence:
+      huntersmc.maintenance: true
+  huntersmc.maintenance:
     description: Maintainence controls for the HuntersMC plugin.
     children:
       huntersmc.forcesave: true
