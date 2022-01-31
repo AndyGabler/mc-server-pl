@@ -3,12 +3,14 @@ package com.gabler.huntersmc.util;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.guard.model.Guard;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
+import com.gabler.huntersmc.context.relationship.model.PlayerRelationship;
 import com.gabler.huntersmc.context.relationship.model.RelationshipType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.context.territory.model.Territory;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
-import java.util.Arrays;
+
+import java.util.Date;
 
 public class GuardAggroUtil {
 
@@ -63,7 +65,20 @@ public class GuardAggroUtil {
             return false;
         }
 
-        final RelationshipType relationship = relationshipData.getTerritoryRelationshipType(targetHomeTerritory, guard.getOwner());
-        return Arrays.asList(RelationshipType.ALLY, RelationshipType.AMBASSADOR).contains(relationship);
+        final PlayerRelationship relationship = relationshipData.getTerritoryRelationship(targetHomeTerritory, guard.getOwner());
+        if (
+            relationship == null ||
+            (relationship.getExpirationDate() != null && relationship.getExpirationDate().before(new Date()))
+        ) {
+            return false;
+        }
+
+        final RelationshipType relationshipType = relationship.getRelationshipType();
+        if (relationshipType == RelationshipType.ALLY) {
+            return true;
+        }
+
+        // If ambassador, the target cannot be the initiator; otherwise, they can envoy themselves into other territories
+        return relationshipType == RelationshipType.AMBASSADOR && relationship.getInitiator() == guard.getOwner();
     }
 }

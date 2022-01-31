@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class RelationshipBreakCommand implements CommandExecutor {
 
@@ -80,7 +81,7 @@ public class RelationshipBreakCommand implements CommandExecutor {
             ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + " with " + targetTerritory.getName() +
             " has ended. Returning to neutral terms."
         );
-        final Player recipient = Bukkit.getPlayer(targetTerritory.getOwnerUuid());
+        final Player recipient = Bukkit.getPlayer(UUID.fromString(targetTerritory.getOwnerUuid()));
         if (recipient != null) {
             recipient.sendMessage(
                 ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + " with " + homeTerritory.getName() +

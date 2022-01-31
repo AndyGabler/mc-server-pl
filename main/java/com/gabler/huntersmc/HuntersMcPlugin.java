@@ -15,6 +15,7 @@ import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
 import com.gabler.huntersmc.context.relationship.model.RelationshipType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
+import com.gabler.huntersmc.handlers.EntityDamageHandler;
 import com.gabler.huntersmc.handlers.EntityDeathHandler;
 import com.gabler.huntersmc.handlers.EntityTargetHandler;
 import com.gabler.huntersmc.handlers.PlayerChatHandler;
@@ -75,6 +76,7 @@ public class HuntersMcPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData, relationshipData), this);
         getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
         getServer().getPluginManager().registerEvents(new PlayerChatHandler(territoryData), this);
+        getServer().getPluginManager().registerEvents(new EntityDamageHandler(territoryData, guardData, relationshipData), this);
 
         getLogger().info("HuntersMC plugin has been enabled.");
     }

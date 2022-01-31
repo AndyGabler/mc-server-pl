@@ -72,7 +72,7 @@ public class RelationshipTermsCommand implements CommandExecutor {
                 );
 
             if (relationship.getExpirationDate() != null) {
-                messageBuilder.append(" (Expires " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(relationship.getRelationshipType()) + ")");
+                messageBuilder.append(" (Expires " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(relationship.getExpirationDate()) + ")");
             }
             sender.sendMessage(messageBuilder.toString());
         });

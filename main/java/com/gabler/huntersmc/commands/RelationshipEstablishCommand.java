@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class RelationshipEstablishCommand implements CommandExecutor {
 
@@ -87,6 +88,11 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         final Territory targetTerritory = territoryData.getTerritoryByName(territoryName);
         if (targetTerritory == null) {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cNo territory exists with name \"" + territoryName + "\".");
+            return true;
+        }
+
+        if (targetTerritory.getOwnerUuid().equalsIgnoreCase(homeTerritory.getOwnerUuid())) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cYou own " + targetTerritory.getName() + ".");
             return true;
         }
 
@@ -195,7 +201,7 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         }
 
         initiator.sendMessage(initiatorMessageBuilder.toString());
-        final Player recipient = Bukkit.getPlayer(targetTerritory.getOwnerUuid());
+        final Player recipient = Bukkit.getPlayer(UUID.fromString(targetTerritory.getOwnerUuid()));
         if (recipient != null) {
             recipient.sendMessage(recipientMessageBuilder.toString());
         }

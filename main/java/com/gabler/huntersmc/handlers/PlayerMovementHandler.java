@@ -53,7 +53,7 @@ public class PlayerMovementHandler implements Listener {
                     // Guard must be naturally in-hostile
                     !guard.getType().isNaturallyHostile() &&
                     // Must have moved onto the guards territory
-                    !guard.getOwner().getName().equalsIgnoreCase(territory.getName()) &&
+                    guard.getOwner().getName().equalsIgnoreCase(territory.getName()) &&
                     // Guards shall not attack their master nor their allies
                     !GuardAggroUtil.isGuardDiplomaticOrSubservient(event.getPlayer(), guard, territoryData, relationshipData)
                 ) {
