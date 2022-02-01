@@ -1,13 +1,15 @@
 package com.gabler.huntersmc.context.relationship.model;
 
+import org.bukkit.ChatColor;
+
 import java.util.Arrays;
 
 public enum RelationshipType {
-    NEUTRAL(0, "Nuetral"),
-    WAR(1, "War"),
-    ALLY(2, "Alliance"),
-    AMBASSADOR(3, "Parley"),
-    PENDING_ALLY(4, "Pending Alliance");
+    NEUTRAL(0, ChatColor.COLOR_CHAR + "7Nuetral"),
+    WAR(1, ChatColor.COLOR_CHAR + "4War"),
+    ALLY(2, ChatColor.COLOR_CHAR + "2Alliance"),
+    AMBASSADOR(3, ChatColor.COLOR_CHAR + "bParley"),
+    PENDING_ALLY(4, ChatColor.COLOR_CHAR + "3Pending Alliance");
 
     private final int id;
     private final String simpleName;

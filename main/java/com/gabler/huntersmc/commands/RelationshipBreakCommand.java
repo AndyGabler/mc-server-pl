@@ -61,7 +61,7 @@ public class RelationshipBreakCommand implements CommandExecutor {
         if (relationshipType != this.relationshipType) {
             sender.sendMessage(
                 ChatColor.COLOR_CHAR + "cYour relationship with " + territoryName + " is " + relationshipType.getSimpleName() +
-                " not " + this.relationshipType.getSimpleName() + "."
+                ChatColor.COLOR_CHAR + "c not " + this.relationshipType.getSimpleName() + ChatColor.COLOR_CHAR + "c."
             );
             return true;
         }
@@ -78,14 +78,14 @@ public class RelationshipBreakCommand implements CommandExecutor {
         }
 
         sender.sendMessage(
-            ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + " with " + targetTerritory.getName() +
-            " has ended. Returning to neutral terms."
+            ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + ChatColor.COLOR_CHAR + "a with " +
+            targetTerritory.getName() + " has ended. Returning to neutral terms."
         );
         final Player recipient = Bukkit.getPlayer(UUID.fromString(targetTerritory.getOwnerUuid()));
         if (recipient != null) {
             recipient.sendMessage(
-                ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + " with " + homeTerritory.getName() +
-                " has ended. Returning to neutral terms."
+                ChatColor.COLOR_CHAR + "aYour " + relationshipType.getSimpleName() + ChatColor.COLOR_CHAR + "a with " +
+                homeTerritory.getName() + " has ended. Returning to neutral terms."
             );
         }
         return true;

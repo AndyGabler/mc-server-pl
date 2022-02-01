@@ -25,6 +25,12 @@ public class PlayerMovementHandler implements Listener {
     private final RelationshipData relationshipData;
     private final HashMap<String, String> currentTerritories;
 
+    /*
+     * Little cheaty, but just a territory name for contested territory, illegal character for CSV loader so it can't be the name of
+     * a real territory.
+     */
+    private static final String CONTESTED_TERRITORY = "*";
+
     public PlayerMovementHandler(TerritoryData aTerritoryData, GuardData aGuardData, RelationshipData aRelationshipData) {
         this.territoryData = aTerritoryData;
         this.guardData = aGuardData;
@@ -72,8 +78,8 @@ public class PlayerMovementHandler implements Listener {
             final String previousChunkTerritory = currentTerritories.get(uuid);
 
             if (territory == null) {
-                currentTerritories.put(uuid, null);
-                if (previousChunkTerritory != null) {
+                currentTerritories.put(uuid, CONTESTED_TERRITORY);
+                if (previousChunkTerritory != null && !previousChunkTerritory.equalsIgnoreCase(CONTESTED_TERRITORY)) {
                     player.sendTitle("Contested Territory", "Free for all.", 10, 70, 20);
                 }
             } else {

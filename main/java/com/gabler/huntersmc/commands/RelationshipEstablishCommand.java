@@ -153,8 +153,9 @@ public class RelationshipEstablishCommand implements CommandExecutor {
                 ? RelationshipType.PENDING_ALLY : relationshipType;
         if (acceptableTransitions == null || !acceptableTransitions.contains(effectiveNewRelationship)) {
             initiator.sendMessage(
-                ChatColor.COLOR_CHAR + "cYou must end your " + existingRelationshipType.getSimpleName() + " with " +
-                targetTerritory.getName() + " before attempting to create a(n) " + relationshipType.getSimpleName() + " with them."
+                ChatColor.COLOR_CHAR + "cYou must end your " + existingRelationshipType.getSimpleName() + ChatColor.COLOR_CHAR +
+                "c with " + targetTerritory.getName() + " before attempting to create a(n) " + relationshipType.getSimpleName() +
+                ChatColor.COLOR_CHAR + "c with them."
             );
             return;
         }
@@ -185,10 +186,10 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         }
 
         final StringBuilder initiatorMessageBuilder = new StringBuilder()
-            .append(ChatColor.COLOR_CHAR + "aYou now have a(n) " + effectiveNewRelationship.getSimpleName() + " with ")
+            .append(ChatColor.COLOR_CHAR + "aYou now have a(n) " + effectiveNewRelationship.getSimpleName() + ChatColor.COLOR_CHAR + "a with ")
             .append(targetTerritory.getName() + ".");
         final StringBuilder recipientMessageBuilder = new StringBuilder()
-            .append(ChatColor.COLOR_CHAR + "aYou now have a(n) " + effectiveNewRelationship.getSimpleName() + " with ")
+            .append(ChatColor.COLOR_CHAR + "aYou now have a(n) " + effectiveNewRelationship.getSimpleName() + ChatColor.COLOR_CHAR + "a with ")
             .append(senderTerritory.getName() + ".");
 
         if (expirationDate != null) {

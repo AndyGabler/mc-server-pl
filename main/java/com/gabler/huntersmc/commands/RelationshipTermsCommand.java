@@ -68,11 +68,15 @@ public class RelationshipTermsCommand implements CommandExecutor {
             final StringBuilder messageBuilder = new StringBuilder()
                 .append(
                     ChatColor.COLOR_CHAR + "aYour relationship with " + getNameOfNotHomeTerritory(relationship, homeTerritory) +
-                    " is: " + relationship.getRelationshipType().name() + "."
+                    " is: " + relationship.getRelationshipType().getSimpleName() + ChatColor.COLOR_CHAR + "a."
                 );
 
             if (relationship.getExpirationDate() != null) {
-                messageBuilder.append(" (Expires " + new SimpleDateFormat("yyyy-MM-dd HH:mm").format(relationship.getExpirationDate()) + ")");
+                messageBuilder.append(
+                    " (Expires " + ChatColor.COLOR_CHAR + "e" +
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm").format(relationship.getExpirationDate()) +
+                    ChatColor.COLOR_CHAR + "a)"
+                );
             }
             sender.sendMessage(messageBuilder.toString());
         });

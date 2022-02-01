@@ -54,7 +54,7 @@ public class GuardListCommand extends AbstractPagingCommand<Guard> {
             final Location location = entity.getLocation();
             text += ChatColor.COLOR_CHAR + "a Status: " + ChatColor.COLOR_CHAR + "eOnline." +
                 ChatColor.COLOR_CHAR + "a Location: " + ChatColor.COLOR_CHAR + "e(" +
-                    location.getX() + ", " + location.getY() + ", " + location.getZ() + ") ";
+                location.getX() + ", " + location.getY() + ", " + location.getZ() + ") ";
         }
 
         text += ChatColor.COLOR_CHAR + "aRespawn Location: " + ChatColor.COLOR_CHAR + "e(" + guard.getHomeX() +
