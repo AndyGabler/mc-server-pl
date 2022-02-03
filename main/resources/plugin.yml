@@ -78,6 +78,11 @@ permissions:
     description: Catchall for the HuntersMC plugin.
     children:
       huntersmc.maintenance: true
+  huntersmc.admin:
+    description: Admin for the HuntersMC plugin.
+    children:
+      huntersmc.maintenance: True
+      huntersmc.ignore-territory-protect: True
   huntersmc.maintenance:
     description: Maintainence controls for the HuntersMC plugin.
     children:
@@ -90,3 +95,12 @@ permissions:
     description: Ability to forcesave HuntersMC data.
   huntersmc.guardrespawn:
     description: Ability to force respawns of all despawned guards.
+  huntersmc.ignore-territory-protect:
+    description: Ability to build on territories otherwise protected.
+    children:
+      huntersmc.ignore-territory-block-protect: True
+      huntersmc.ignore-territory-container-protect: True
+  huntersmc.ignore-territory-block-protect:
+    description: Ability to build on territories otherwise protected.
+  huntersmc.ignore-territory-container-protect:
+    description: Ability to build on territories otherwise protected.
