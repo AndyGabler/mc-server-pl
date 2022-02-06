@@ -29,6 +29,19 @@ public class ConfigurationCommand implements CommandExecutor {
         .put("TerritoryPrice", "glory-config.price.claim-territory")
         .put("DeclareWarPriceMin", "glory-config.price.declare-war-min")
         .put("DeclareWarPriceMax", "glory-config.price.declare-war-max")
+        .put("GlorySurrenderPenalty", "glory-config.events.surrender-penalty")
+        .put("GloryGuardKillReward", "glory-config.events.kill-guard")
+        .put("GloryBruteKillReward", "glory-config.events.kill-guard.brute")
+        .put("GloryMobKillReward", "glory-config.events.mob-kill")
+        .put("GloryGuardExecutePenalty", "glory-config.events.guard-execute-penalty")
+        .put("GloryDefenseKillReward", "glory-config.events.defense-kill")
+        .put("GloryWildKillReward", "glory-config.events.wild-kill")
+        .put("GloryOffensiveKillReward", "glory-config.events.offensive-kill")
+        .put("GloryTerritoryHogReward", "glory-config.events.territories-holding")
+        .put("GloryDefeatPenalty", "glory-config.events.defeat-penalty")
+        .put("GloryPveDefeatPenalty", "glory-config.events.environment-death-penalty")
+        .put("GloryDiamondMiningReward", "glory-config.events.diamond-mining")
+        .put("GloryGuardDefenseReward", "glory-config.events.guard-defense")
         .build();
 
     public static final Map<String, Converter>
@@ -46,6 +59,19 @@ public class ConfigurationCommand implements CommandExecutor {
         .put("TerritoryPrice", INT_CONVERTER)
         .put("DeclareWarPriceMin", INT_CONVERTER)
         .put("DeclareWarPriceMax", INT_CONVERTER)
+        .put("GlorySurrenderPenalty", INT_CONVERTER)
+        .put("GloryGuardKillReward", INT_CONVERTER)
+        .put("GloryBruteKillReward", INT_CONVERTER)
+        .put("GloryMobKillReward", INT_CONVERTER)
+        .put("GloryGuardExecutePenalty", INT_CONVERTER)
+        .put("GloryDefenseKillReward", INT_CONVERTER)
+        .put("GloryWildKillReward", INT_CONVERTER)
+        .put("GloryOffensiveKillReward", INT_CONVERTER)
+        .put("GloryTerritoryHogReward", INT_CONVERTER)
+        .put("GloryDefeatPenalty", INT_CONVERTER)
+        .put("GloryPveDefeatPenalty", INT_CONVERTER)
+        .put("GloryDiamondMiningReward", INT_CONVERTER)
+        .put("GloryGuardDefenseReward", INT_CONVERTER)
         .build();
 
     public ConfigurationCommand(JavaPlugin aPlugin) {

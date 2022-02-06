@@ -57,6 +57,7 @@ public class TerritoryClaimCommand implements CommandExecutor {
         try {
             territoryData.claimTerritory(chunk.getX(), chunk.getZ(), uuid, territoryName);
             gloryData.hardSetPlayerGlory(uuid, gloryAmount - cost);
+            gloryData.changeTerritoryCount(uuid);
             territoryData.save();
             gloryData.save();
         } catch (TerritoryException territoryException) {

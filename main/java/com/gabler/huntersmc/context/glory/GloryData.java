@@ -8,6 +8,9 @@ import com.gabler.huntersmc.context.territory.model.Territory;
 import com.gabler.huntersmc.util.CsvDataIntegrityException;
 import com.gabler.huntersmc.util.CsvLoader;
 import com.gabler.huntersmc.util.CsvRow;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 public class GloryData {
 
@@ -107,6 +111,41 @@ public class GloryData {
         return profile.getGloryAmount();
     }
 
+    public void gainGlory(String playerUuid, int gloryAmount, String reason) {
+        final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
+            profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
+        ).findFirst().get();
+
+        plugin.getLogger().info("Player with UUID " + playerUuid + " has gained " + gloryAmount + " glory for hitting trigger " + reason + ".");
+
+        final double allianceMultiplier = plugin.getConfig().getDouble("glory-config.alliance-multiplier");
+        final double warMultiplier = plugin.getConfig().getDouble("glory-config.war-multiplier");
+        final double territoryMultiplier = plugin.getConfig().getDouble("glory-config.territory-hog-multiplier");
+
+        final double multiplier =
+            allianceMultiplier * ((double) playerProfile.getCachedAllianceCount()) +
+            warMultiplier * ((double) playerProfile.getCachedWarCount()) +
+            territoryMultiplier * ((double) playerProfile.getCachedTerritoriesOverCapacityCount());
+        
+        plugin.getLogger().info("Player with UUID has glory gain multiplier of " + multiplier + ".");
+
+        double gloryDelta = Math.min(1.0, multiplier * (double) gloryAmount);
+        playerProfile.setGloryAmount(playerProfile.getGloryAmount() + (int) gloryDelta);
+
+        loader
+            .getRowByCriteria(row -> Integer.parseInt(row.getValue("id")) == playerProfile.getId())
+            .setValue("gloryAmount", playerProfile.getGloryAmount() + "");
+
+        final Player player=  Bukkit.getPlayer(UUID.fromString(playerUuid));
+        if (player != null) {
+            player.sendMessage(
+                ChatColor.COLOR_CHAR + "aYou've gained " + ChatColor.COLOR_CHAR + "e" + (int) gloryDelta +
+                ChatColor.COLOR_CHAR + "a for " + ChatColor.COLOR_CHAR + "e" + reason + ChatColor.COLOR_CHAR +
+                "a."
+            );
+        }
+    }
+
     public void hardSetPlayerGlory(String playerUuid, int gloryAmount) {
         final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
             profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
@@ -116,17 +155,39 @@ public class GloryData {
 
         loader
             .getRowByCriteria(row -> Integer.parseInt(row.getValue("id")) == playerProfile.getId())
-            .setValue("id", playerProfile.getId() + "");
+            .setValue("gloryAmount", playerProfile.getGloryAmount() + "");
+    }
+
+    public void changeWarCount(String playerUuid, boolean isIncrement) {
+        final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
+            profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
+        ).findFirst().get();
+
+        int delta = isIncrement ? 1 : -1;
+        playerProfile.setCachedWarCount(playerProfile.getCachedWarCount() + delta);
+    }
+
+    public void changeAllyCount(String playerUuid, boolean isIncrement) {
+        final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
+            profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
+        ).findFirst().get();
+
+        int delta = isIncrement ? 1 : -1;
+        playerProfile.setCachedAllianceCount(playerProfile.getCachedAllianceCount() + delta);
+    }
+
+    public void changeTerritoryCount(String playerUuid) {
+        final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
+            profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
+        ).findFirst().get();
+        applyTerritoryCacheInfoToProfile(playerProfile, playerUuid);
     }
 
     private void applyCacheInfoToProfile(GloryProfile profile, String playerUuid) {
-        final Territory territory = territoryData.getTerritoryByOwnerUuid(playerUuid);
+        final Territory territory = applyTerritoryCacheInfoToProfile(profile, playerUuid);
         if (territory == null) {
             return;
         }
-        final int territoryCount = territory.getClaims().size();
-        final int territoryThreshold = plugin.getConfig().getInt("territory-limit") - 1;
-        profile.setCachedTerritoriesOverCapacityCount(territoryCount > territoryThreshold ? territoryCount - territoryThreshold : 1);
 
         profile.setCachedAllianceCount(
             (int) relationshipData.getTerritoryRelationships(territory).stream().filter(relationship ->
@@ -140,6 +201,17 @@ public class GloryData {
         );
 
         playerUuidCache.add(playerUuid);
+    }
+
+    private Territory applyTerritoryCacheInfoToProfile(GloryProfile profile, String playerUuid) {
+        final Territory territory = territoryData.getTerritoryByOwnerUuid(playerUuid);
+        if (territory == null) {
+            return null;
+        }
+        final int territoryCount = territory.getClaims().size();
+        final int territoryThreshold = plugin.getConfig().getInt("territory-limit");
+        profile.setCachedTerritoriesOverCapacityCount(territoryCount > territoryThreshold ? territoryCount - territoryThreshold : 0);
+        return territory;
     }
 
     public void save() throws IOException {

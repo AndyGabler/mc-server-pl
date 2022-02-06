@@ -14,7 +14,21 @@ glory-config:
     declare-war-max: 10000
     guard-spawn:
       patrol: 50
-      brute: 50
+      brute: 1500
       ranger: 50
-      hound: 50
-      bruiser: 50
+      hound: 2500
+      bruiser: 500
+  events:
+    surrender-penalty: -5000
+    kill-guard: 25
+      brute: 100
+    mob-kill: 10
+    guard-execute-penalty: -100
+    defense-kill: 75
+    wild-kill: 150
+    offensive-kill: 300
+    territories-holding: 50
+    defeat-penalty: -100
+    environment-death-penalty: -450
+    diamond-mining: 45
+    guard-defense: 90

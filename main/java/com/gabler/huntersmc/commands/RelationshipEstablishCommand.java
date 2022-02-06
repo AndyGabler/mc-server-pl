@@ -182,6 +182,8 @@ public class RelationshipEstablishCommand implements CommandExecutor {
 
         }
 
+        updateGloryCache(senderTerritory.getOwnerUuid(), effectiveNewRelationship, false);
+        updateGloryCache(targetTerritory.getOwnerUuid(), effectiveNewRelationship, false);
         // Validations done. This relationship is good to go.
         try {
             relationshipData.setTerritoryRelationshipType(senderTerritory, targetTerritory, effectiveNewRelationship, expirationDate);
@@ -193,6 +195,10 @@ public class RelationshipEstablishCommand implements CommandExecutor {
                 ChatColor.COLOR_CHAR + "4Unknown error occurred. Please report timestamp to admin: " +
                 new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date())
             );
+
+            // Backout for the glory updates
+            updateGloryCache(senderTerritory.getOwnerUuid(), effectiveNewRelationship, true);
+            updateGloryCache(targetTerritory.getOwnerUuid(), effectiveNewRelationship, true);
         }
 
         final StringBuilder initiatorMessageBuilder = new StringBuilder()
@@ -244,5 +250,13 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private void updateGloryCache(String playerUuid, RelationshipType newRelationship, boolean backout) {
+        if (newRelationship == RelationshipType.ALLY) {
+            gloryData.changeAllyCount(playerUuid, !backout);
+        } else if (newRelationship == RelationshipType.WAR) {
+            gloryData.changeWarCount(playerUuid, !backout);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.gabler.huntersmc.commands;
 
 import com.gabler.huntersmc.commands.util.TerritoryInputUtil;
+import com.gabler.huntersmc.context.glory.GloryData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
 import com.gabler.huntersmc.context.relationship.model.RelationshipType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
@@ -20,15 +21,18 @@ public class RelationshipBreakCommand implements CommandExecutor {
 
     private final TerritoryData territoryData;
     private final RelationshipData relationshipData;
+    private final GloryData gloryData;
     private final RelationshipType relationshipType;
 
     public RelationshipBreakCommand(
         TerritoryData aTerritoryData,
         RelationshipData aRelationshipData,
+        GloryData aGloryData,
         RelationshipType aRelationshipType
     ) {
         this.territoryData = aTerritoryData;
         this.relationshipData = aRelationshipData;
+        this.gloryData = aGloryData;
         this.relationshipType = aRelationshipType;
     }
 
@@ -65,7 +69,9 @@ public class RelationshipBreakCommand implements CommandExecutor {
             );
             return true;
         }
-        
+
+        updateGloryCache(homeTerritory.getOwnerUuid(), false);
+        updateGloryCache(homeTerritory.getOwnerUuid(), false);
         try {
             relationshipData.setTerritoryRelationshipType(homeTerritory, targetTerritory, RelationshipType.NEUTRAL, null);
             relationshipData.save();
@@ -75,6 +81,8 @@ public class RelationshipBreakCommand implements CommandExecutor {
                ChatColor.COLOR_CHAR + "4Unknown error occurred. Please report timestamp to admin: " +
                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date())
             );
+            updateGloryCache(homeTerritory.getOwnerUuid(), true);
+            updateGloryCache(homeTerritory.getOwnerUuid(), true);
         }
 
         sender.sendMessage(
@@ -89,5 +97,13 @@ public class RelationshipBreakCommand implements CommandExecutor {
             );
         }
         return true;
+    }
+
+    private void updateGloryCache(String playerUuid, boolean backout) {
+        if (relationshipType == RelationshipType.ALLY) {
+            gloryData.changeAllyCount(playerUuid, backout);
+        } else if (relationshipType == RelationshipType.WAR) {
+            gloryData.changeWarCount(playerUuid, backout);
+        }
     }
 }

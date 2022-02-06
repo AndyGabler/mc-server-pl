@@ -73,11 +73,11 @@ public class HuntersMcPlugin extends JavaPlugin {
         getCommand("envoy").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.AMBASSADOR));
         getCommand("ally").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.ALLY));
         getCommand("declarewar").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.WAR));
-        getCommand("eject").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.AMBASSADOR));
-        getCommand("rejectalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.PENDING_ALLY));
-        getCommand("breakalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.ALLY));
-        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
-        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, RelationshipType.WAR));
+        getCommand("eject").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.AMBASSADOR));
+        getCommand("rejectalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.PENDING_ALLY));
+        getCommand("breakalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.ALLY));
+        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.WAR));
+        getCommand("surrender").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.WAR));
         getCommand("terms").setExecutor(new RelationshipTermsCommand(territoryData, relationshipData));
 
         // Glory commands
