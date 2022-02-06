@@ -25,7 +25,6 @@ public class GuardData {
     private int idCounter = 0;
 
     public GuardData(JavaPlugin plugin, TerritoryData territoryData) throws IOException, CsvDataIntegrityException {
-
         final CsvLoader loader = new CsvLoader(plugin.getConfig().getString("guard-data-loc"));
         loader.ensureFileExists();
         loader.load();
@@ -33,7 +32,7 @@ public class GuardData {
         loader.save();
         this.loader = loader;
 
-        List<CsvRow> rows = loader.getRows();
+        final List<CsvRow> rows = loader.getRows();
         for (int index = 0; index < rows.size(); index++) {
             final CsvRow row = rows.get(index);
             final int id = Integer.parseInt(row.getValue("id"));

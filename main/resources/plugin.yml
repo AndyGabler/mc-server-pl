@@ -73,6 +73,15 @@ commands:
     description: See the terms you are on with another territory.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage /terms <territory name [optional]>"
+  glory:
+    description: Check the amount of glory you have accumulated.
+    permission-message: Andy can't code so you don't have permission to this important command.
+    usage: "Usage /glory"
+  hmcconfigure:
+    description: Configure HuntersMC plugin.
+    permission-message: You do not have permission to do this.
+    usage: "Usage /hmcconfigure <parameter name> <value>"
+    permission: huntersmc.update-config
 permissions:
   huntersmc.*:
     description: Catchall for the HuntersMC plugin.
@@ -81,8 +90,9 @@ permissions:
   huntersmc.admin:
     description: Admin for the HuntersMC plugin.
     children:
-      huntersmc.maintenance: True
-      huntersmc.ignore-territory-protect: True
+      huntersmc.maintenance: true
+      huntersmc.update-config: true
+      huntersmc.ignore-territory-protect: true
   huntersmc.maintenance:
     description: Maintainence controls for the HuntersMC plugin.
     children:
@@ -98,9 +108,11 @@ permissions:
   huntersmc.ignore-territory-protect:
     description: Ability to build on territories otherwise protected.
     children:
-      huntersmc.ignore-territory-block-protect: True
+      huntersmc.ignore-territory-block-protect: true
       huntersmc.ignore-territory-container-protect: True
   huntersmc.ignore-territory-block-protect:
     description: Ability to build on territories otherwise protected.
   huntersmc.ignore-territory-container-protect:
     description: Ability to build on territories otherwise protected.
+  huntersmc.update-config:
+    description: Ability to update the configuration.

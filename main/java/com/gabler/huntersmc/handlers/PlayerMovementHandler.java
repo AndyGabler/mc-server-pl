@@ -64,7 +64,7 @@ public class PlayerMovementHandler implements Listener {
                     !GuardAggroUtil.isGuardDiplomaticOrSubservient(event.getPlayer(), guard, territoryData, relationshipData)
                 ) {
                     final Entity guardEntity = Bukkit.getEntity(UUID.fromString(guard.getEntityUuid()));
-                    if (guardEntity != null && guardEntity instanceof Mob) {
+                    if (guardEntity instanceof Mob) {
                         ((Mob)guardEntity).setTarget(event.getPlayer());
                     }
                 }

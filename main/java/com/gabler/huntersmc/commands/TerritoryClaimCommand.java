@@ -1,6 +1,7 @@
 package com.gabler.huntersmc.commands;
 
 import com.gabler.huntersmc.commands.util.TerritoryInputUtil;
+import com.gabler.huntersmc.context.glory.GloryData;
 import com.gabler.huntersmc.context.territory.TerritoryData;
 import com.gabler.huntersmc.util.TerritoryException;
 import org.bukkit.ChatColor;
@@ -10,16 +11,21 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TerritoryClaimCommand implements CommandExecutor {
 
+    private final JavaPlugin plugin;
     private final TerritoryData territoryData;
+    private final GloryData gloryData;
 
-    public TerritoryClaimCommand(TerritoryData aTerritoryData) {
+    public TerritoryClaimCommand(JavaPlugin aPlugin, TerritoryData aTerritoryData, GloryData aGloryData) {
+        this.plugin = aPlugin;
         this.territoryData = aTerritoryData;
+        this.gloryData = aGloryData;
     }
 
     @Override
@@ -37,9 +43,22 @@ public class TerritoryClaimCommand implements CommandExecutor {
 
         Chunk chunk = ((Player) sender).getLocation().getChunk();
 
+        final String uuid = ((Player) sender).getUniqueId().toString();
+        final Integer gloryAmount = gloryData.gloryAmountForPlayer(uuid);
+        final int cost = plugin.getConfig().getInt("glory-config.price.claim-territory");
+        if (gloryAmount == null) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
+            return true;
+        } else if (gloryAmount < cost) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cClaiming territory requires " + cost + " glory. You only have" + gloryAmount + ".");
+            return true;
+        }
+
         try {
-            territoryData.claimTerritory(chunk.getX(), chunk.getZ(), ((Player) sender).getUniqueId().toString(), territoryName);
+            territoryData.claimTerritory(chunk.getX(), chunk.getZ(), uuid, territoryName);
+            gloryData.hardSetPlayerGlory(uuid, gloryAmount - cost);
             territoryData.save();
+            gloryData.save();
         } catch (TerritoryException territoryException) {
             sender.sendMessage(ChatColor.COLOR_CHAR + "c" + territoryException.getMessage());
             return true;

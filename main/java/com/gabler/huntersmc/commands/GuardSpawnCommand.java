@@ -1,5 +1,6 @@
 package com.gabler.huntersmc.commands;
 
+import com.gabler.huntersmc.context.glory.GloryData;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.guard.model.GuardType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
@@ -15,18 +16,23 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTables;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class GuardSpawnCommand implements CommandExecutor {
 
+    private final JavaPlugin plugin;
     private final TerritoryData territoryData;
     private final GuardData guardData;
+    private final GloryData gloryData;
 
-    public GuardSpawnCommand(TerritoryData aTerritoryData, GuardData aGuardData) {
+    public GuardSpawnCommand(JavaPlugin aPlugin, TerritoryData aTerritoryData, GuardData aGuardData, GloryData aGloryData) {
+        this.plugin = aPlugin;
         this.territoryData = aTerritoryData;
         this.guardData = aGuardData;
+        this.gloryData = aGloryData;
     }
 
     @Override
@@ -46,10 +52,11 @@ public class GuardSpawnCommand implements CommandExecutor {
         }
 
         final Player player = (Player) sender;
+        final String uuid = player.getUniqueId().toString();
         final Chunk playerChunk = player.getLocation().getChunk();
         final Territory currentTerritory = territoryData.getTerritoryFromChunk(playerChunk.getX(), playerChunk.getZ());
 
-        if (currentTerritory == null || !currentTerritory.getOwnerUuid().equalsIgnoreCase(player.getUniqueId().toString())) {
+        if (currentTerritory == null || !currentTerritory.getOwnerUuid().equalsIgnoreCase(uuid)) {
             player.sendMessage(ChatColor.COLOR_CHAR + "cCan only place a guard in your own territory.");
             return true;
         }
@@ -57,6 +64,19 @@ public class GuardSpawnCommand implements CommandExecutor {
         final GuardType guardType = GuardType.forAlias(args[0]);
         if (guardType == null) {
             player.sendMessage(ChatColor.COLOR_CHAR + "cNo guard with alias \"" + args[0] + "\" found. (See /guardtype command)");
+            return true;
+        }
+
+        final int cost = plugin.getConfig().getInt("glory-config.price.guard-spawn." + guardType.getSimpleName().toLowerCase());
+        final Integer gloryAmount = gloryData.gloryAmountForPlayer(uuid);
+        if (gloryAmount == null) {
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
+            return true;
+        } else if (gloryAmount < cost) {
+            sender.sendMessage(
+                ChatColor.COLOR_CHAR + "cSpawning a " + guardType.getSimpleName() + " requires " + cost + " glory. " +
+                "You only have" + gloryAmount + "."
+            );
             return true;
         }
 
@@ -77,7 +97,9 @@ public class GuardSpawnCommand implements CommandExecutor {
                 player.getLocation().getY(),
                 player.getLocation().getZ()
             );
+            gloryData.hardSetPlayerGlory(uuid, gloryAmount - cost);
             guardData.save();
+            gloryData.save();
         } catch (GuardException exception) {
             guard.damage(9999999999.0);
             sender.sendMessage(ChatColor.COLOR_CHAR + "c" + exception.getMessage());

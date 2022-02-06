@@ -10,10 +10,10 @@ public enum GuardType {
     HOUND("Hound", 3, "Territory attack dog.", "ravager"),
     BRUISER("Bruiser", 4, "Guard that packs a punch.", "vindicator");
 
-    private String simpleName;
-    private int id;
-    private String description;
-    private ArrayList<String> aliases;
+    private final String simpleName;
+    private final int id;
+    private final String description;
+    private final ArrayList<String> aliases;
 
     GuardType(String simpleName, int id, String description, String... aliases) {
         this.simpleName = simpleName;

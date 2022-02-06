@@ -1,6 +1,7 @@
 package com.gabler.huntersmc.commands;
 
 import com.gabler.huntersmc.commands.util.TerritoryInputUtil;
+import com.gabler.huntersmc.context.glory.GloryData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
 import com.gabler.huntersmc.context.relationship.model.RelationshipType;
 import com.gabler.huntersmc.context.territory.TerritoryData;
@@ -25,6 +26,7 @@ public class RelationshipEstablishCommand implements CommandExecutor {
     private final TerritoryData territoryData;
     private final RelationshipData relationshipData;
     private final RelationshipType relationshipType;
+    private final GloryData gloryData;
 
     private static final ImmutableMap<RelationshipType, List<RelationshipType>> ACCEPTABLE_TRANSITIONS;
     static {
@@ -44,10 +46,12 @@ public class RelationshipEstablishCommand implements CommandExecutor {
     public RelationshipEstablishCommand(
         TerritoryData aTerritoryData,
         RelationshipData aRelationshipData,
+        GloryData aGloryData,
         RelationshipType aRelationshipType
     ) {
         this.territoryData = aTerritoryData;
         this.relationshipData = aRelationshipData;
+        this.gloryData = aGloryData;
         this.relationshipType = aRelationshipType;
     }
 
@@ -160,6 +164,11 @@ public class RelationshipEstablishCommand implements CommandExecutor {
             return;
         }
 
+        // Check glory prerequisites
+        if (!validateGlory(initiator, senderTerritory.getOwnerUuid(), targetTerritory.getName(), targetTerritory.getOwnerUuid())) {
+            return;
+        }
+
         if (existingRelationshipType == RelationshipType.PENDING_ALLY) {
             boolean senderIsInitiator = relationshipData.getTerritoryRelationship(senderTerritory, targetTerritory).getInitiator().getOwnerUuid().equalsIgnoreCase(initiator.getUniqueId().toString());
             // If sender is the initiator of the pending alliance, do nothing. Other player has to accept it.
@@ -177,6 +186,7 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         try {
             relationshipData.setTerritoryRelationshipType(senderTerritory, targetTerritory, effectiveNewRelationship, expirationDate);
             relationshipData.save();
+            gloryData.save();
         } catch (Exception exception) {
             exception.printStackTrace();
             initiator.sendMessage(
@@ -206,5 +216,33 @@ public class RelationshipEstablishCommand implements CommandExecutor {
         if (recipient != null) {
             recipient.sendMessage(recipientMessageBuilder.toString());
         }
+    }
+
+    private boolean validateGlory(Player initiator, String initiatingPlayerUuid, String recipientName, String recipientPlayerUuid) {
+        if (relationshipType != RelationshipType.WAR) {
+            return true;
+        }
+
+        final Integer recipientGloryAmount = gloryData.gloryAmountForPlayer(recipientPlayerUuid);
+        if (recipientGloryAmount == null) {
+            initiator.sendMessage(ChatColor.COLOR_CHAR + "cNo glory profile for target territory. Notify admin.");
+            return false;
+        }
+
+        final int cost = recipientGloryAmount / 10;
+        final Integer gloryAmount = gloryData.gloryAmountForPlayer(initiatingPlayerUuid);
+        if (gloryAmount == null) {
+            initiator.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
+            return false;
+        } else if (gloryAmount < cost) {
+            initiator.sendMessage(
+                ChatColor.COLOR_CHAR + "cDeclaring war on " + recipientName + " requires " + cost + " glory. You only" +
+                " have " + gloryAmount + "."
+            );
+            gloryData.hardSetPlayerGlory(initiatingPlayerUuid, gloryAmount - cost);
+            return false;
+        }
+
+        return true;
     }
 }

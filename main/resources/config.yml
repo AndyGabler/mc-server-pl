@@ -2,3 +2,19 @@ territory-data-loc: territory.csv
 territory-limit: 15
 guard-data-loc: guards.csv
 relationship-data-loc: relationships.csv
+glory-data-loc: glory.csv
+glory-config:
+  alliance-multiplier: -0.21
+  war-multiplier: 0.37
+  territory-hog-multiplier: 0.16
+  starting-glory-amount: 0
+  price:
+    claim-territory: 750
+    declare-war-min: 1000
+    declare-war-max: 10000
+    guard-spawn:
+      patrol: 50
+      brute: 50
+      ranger: 50
+      hound: 50
+      bruiser: 50

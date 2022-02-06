@@ -34,7 +34,7 @@ public class TerritoryData {
         loader.save();
         this.loader = loader;
 
-        List<CsvRow> rows = loader.getRows();
+        final List<CsvRow> rows = loader.getRows();
         for (final CsvRow row : rows) {
             final String territoryName = row.getValue("territory");
             final String ownerUuid = row.getValue("ownerUuid");

@@ -33,7 +33,7 @@ public class RelationshipData {
         loader.save();
         this.loader = loader;
 
-        List<CsvRow> rows = loader.getRows();
+        final List<CsvRow> rows = loader.getRows();
         // TODO validate one relationship per territory pair
         for (final CsvRow row : rows) {
             final String territory1Name = row.getValue("territory1");
