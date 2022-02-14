@@ -7,6 +7,7 @@ import com.gabler.huntersmc.context.territory.TerritoryData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +15,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 
 import java.util.ArrayList;
@@ -120,6 +123,11 @@ public class GuardRespawnCommand implements CommandExecutor {
             entityType,
             false
         );
+
+        if (guardMob instanceof Skeleton) {
+            guardMob.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
+        }
+
         guardMob.setCustomName(colorCode + guard.getOwner().getName() + " " + guard.getType().getSimpleName());
         guardMob.setRemoveWhenFarAway(false);
         guardMob.setLootTable(LootTables.EMPTY.getLootTable());

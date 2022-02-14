@@ -8,6 +8,7 @@ import com.gabler.huntersmc.context.territory.model.Territory;
 import com.gabler.huntersmc.util.GuardException;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,6 +16,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -122,7 +125,9 @@ public class GuardSpawnCommand implements CommandExecutor {
     private Mob spawnMobForGuardType(GuardType guardType, Player player) {
         switch (guardType) {
             case RANGER:
-                return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON, false);
+                final Skeleton ranger = (Skeleton) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON, false);
+                ranger.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
+                return ranger;
             case PATROL:
                 return (Mob) player.getWorld().spawnEntity(player.getLocation(), EntityType.WITHER_SKELETON, false);
             case BRUTE:
