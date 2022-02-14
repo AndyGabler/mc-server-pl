@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 public class RelationshipEstablishCommand implements CommandExecutor {
 
+    private final JavaPlugin plugin;
     private final TerritoryData territoryData;
     private final RelationshipData relationshipData;
     private final RelationshipType relationshipType;
@@ -44,11 +46,13 @@ public class RelationshipEstablishCommand implements CommandExecutor {
     }
 
     public RelationshipEstablishCommand(
+        JavaPlugin aPlugin,
         TerritoryData aTerritoryData,
         RelationshipData aRelationshipData,
         GloryData aGloryData,
         RelationshipType aRelationshipType
     ) {
+        this.plugin = aPlugin;
         this.territoryData = aTerritoryData;
         this.relationshipData = aRelationshipData;
         this.gloryData = aGloryData;
@@ -235,7 +239,9 @@ public class RelationshipEstablishCommand implements CommandExecutor {
             return false;
         }
 
-        final int cost = recipientGloryAmount / 10;
+        final int minimumCost = plugin.getConfig().getInt("glory-config.price.declare-war-min");
+        final int maximumCost = plugin.getConfig().getInt("glory-config.price.declare-war-max");
+        final int cost = Math.max(minimumCost, Math.min(recipientGloryAmount / 10, maximumCost));
         final Integer gloryAmount = gloryData.gloryAmountForPlayer(initiatingPlayerUuid);
         if (gloryAmount == null) {
             initiator.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
@@ -245,8 +251,10 @@ public class RelationshipEstablishCommand implements CommandExecutor {
                 ChatColor.COLOR_CHAR + "cDeclaring war on " + recipientName + " requires " + cost + " glory. You only" +
                 " have " + gloryAmount + "."
             );
-            gloryData.hardSetPlayerGlory(initiatingPlayerUuid, gloryAmount - cost);
             return false;
+        } else {
+            // If you have enough glory to start the war, do it
+            gloryData.hardSetPlayerGlory(initiatingPlayerUuid, gloryAmount - cost);
         }
 
         return true;

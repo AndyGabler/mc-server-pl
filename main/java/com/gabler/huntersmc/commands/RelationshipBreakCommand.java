@@ -71,7 +71,8 @@ public class RelationshipBreakCommand implements CommandExecutor {
         }
 
         updateGloryCache(homeTerritory.getOwnerUuid(), false);
-        updateGloryCache(homeTerritory.getOwnerUuid(), false);
+        updateGloryCache(targetTerritory.getOwnerUuid(), false);
+        applyWarResultGlory(targetTerritory.getOwnerUuid(), homeTerritory.getOwnerUuid());
         try {
             relationshipData.setTerritoryRelationshipType(homeTerritory, targetTerritory, RelationshipType.NEUTRAL, null);
             relationshipData.save();
@@ -82,7 +83,7 @@ public class RelationshipBreakCommand implements CommandExecutor {
                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date())
             );
             updateGloryCache(homeTerritory.getOwnerUuid(), true);
-            updateGloryCache(homeTerritory.getOwnerUuid(), true);
+            updateGloryCache(targetTerritory.getOwnerUuid(), true);
         }
 
         sender.sendMessage(
@@ -105,5 +106,13 @@ public class RelationshipBreakCommand implements CommandExecutor {
         } else if (relationshipType == RelationshipType.WAR) {
             gloryData.changeWarCount(playerUuid, backout);
         }
+    }
+
+    private void applyWarResultGlory(String winnerUuid, String loserUuid) {
+        if (relationshipType != RelationshipType.WAR) {
+            return;
+        }
+        gloryData.applyGloryEvent(winnerUuid, "War Victory", "glory-config.events.war-victory");
+        gloryData.applyGloryEvent(loserUuid, "War Surrender", "glory-config.events.surrender-penalty");
     }
 }

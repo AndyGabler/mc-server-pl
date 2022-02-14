@@ -20,8 +20,9 @@ glory-config:
       bruiser: 500
   events:
     surrender-penalty: -5000
+    war-victory: 6000
     kill-guard: 25
-      brute: 100
+    kill-guard-brute: 100
     mob-kill: 10
     guard-execute-penalty: -100
     defense-kill: 75

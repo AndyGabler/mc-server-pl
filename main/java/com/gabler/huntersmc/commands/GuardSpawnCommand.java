@@ -75,7 +75,7 @@ public class GuardSpawnCommand implements CommandExecutor {
         } else if (gloryAmount < cost) {
             sender.sendMessage(
                 ChatColor.COLOR_CHAR + "cSpawning a " + guardType.getSimpleName() + " requires " + cost + " glory. " +
-                "You only have" + gloryAmount + "."
+                "You only have " + gloryAmount + "."
             );
             return true;
         }

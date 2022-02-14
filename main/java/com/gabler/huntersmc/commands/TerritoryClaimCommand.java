@@ -50,7 +50,7 @@ public class TerritoryClaimCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
             return true;
         } else if (gloryAmount < cost) {
-            sender.sendMessage(ChatColor.COLOR_CHAR + "cClaiming territory requires " + cost + " glory. You only have" + gloryAmount + ".");
+            sender.sendMessage(ChatColor.COLOR_CHAR + "cClaiming territory requires " + cost + " glory. You only have " + gloryAmount + ".");
             return true;
         }
 

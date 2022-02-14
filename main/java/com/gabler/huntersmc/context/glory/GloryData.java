@@ -111,6 +111,40 @@ public class GloryData {
         return profile.getGloryAmount();
     }
 
+    public void applyGloryEvent(String playerUuid, String reason, String eventParameter) {
+        applyGloryEvent(playerUuid, reason, eventParameter, null, 1);
+    }
+
+    public void applyGloryEvent(String playerUuid, String reason, String eventParameter, int multiplier) {
+        applyGloryEvent(playerUuid, reason, eventParameter, null, multiplier);
+    }
+
+    public void applyGloryEvent(String playerUuid, String reason, String defaultParameter, String optionalParameter) {
+        applyGloryEvent(playerUuid, reason, defaultParameter, optionalParameter, 1);
+    }
+
+    public void applyGloryEvent(String playerUuid, String reason, String defaultParameter, String optionalParameter, int multiplier) {
+        int gloryAmount = plugin.getConfig().getInt(defaultParameter);
+        if (plugin.getConfig().contains(defaultParameter + "-" + optionalParameter)) {
+            gloryAmount = plugin.getConfig().getInt(defaultParameter + "-" + optionalParameter);
+        }
+        if (gloryAmount > 0) {
+            gainGlory(playerUuid, gloryAmount * multiplier, reason);
+        } else if (gloryAmount < 0) {
+            final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
+                profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
+            ).findFirst().get();
+
+            plugin.getLogger().info("Penalizing player with UUID " + playerUuid + " " + gloryAmount + " glory for " + reason + ".");
+            hardSetPlayerGlory(playerUuid, playerProfile.getGloryAmount() + gloryAmount);
+            final Player player = Bukkit.getPlayer(UUID.fromString(playerUuid));
+            player.sendMessage(
+                ChatColor.COLOR_CHAR + "cYou've lost " + ChatColor.COLOR_CHAR + "e" + Math.abs(gloryAmount) + ChatColor.COLOR_CHAR +
+                "c Glory for " + ChatColor.COLOR_CHAR + "e" + reason + ChatColor.COLOR_CHAR + "a."
+            );
+        }
+    }
+
     public void gainGlory(String playerUuid, int gloryAmount, String reason) {
         final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
             profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
@@ -122,36 +156,39 @@ public class GloryData {
         final double warMultiplier = plugin.getConfig().getDouble("glory-config.war-multiplier");
         final double territoryMultiplier = plugin.getConfig().getDouble("glory-config.territory-hog-multiplier");
 
-        final double multiplier =
+        final double multiplier = 1.0 +
             allianceMultiplier * ((double) playerProfile.getCachedAllianceCount()) +
             warMultiplier * ((double) playerProfile.getCachedWarCount()) +
             territoryMultiplier * ((double) playerProfile.getCachedTerritoriesOverCapacityCount());
         
-        plugin.getLogger().info("Player with UUID has glory gain multiplier of " + multiplier + ".");
+        plugin.getLogger().info("Player with UUID " + playerUuid + " has glory gain multiplier of " + multiplier + ".");
 
-        double gloryDelta = Math.min(1.0, multiplier * (double) gloryAmount);
-        playerProfile.setGloryAmount(playerProfile.getGloryAmount() + (int) gloryDelta);
+        double gloryDelta = Math.max(1.0, multiplier * (double) gloryAmount);
+        playerProfile.setGloryAmount(Math.max(playerProfile.getGloryAmount() + (int) gloryDelta, 0));
 
         loader
             .getRowByCriteria(row -> Integer.parseInt(row.getValue("id")) == playerProfile.getId())
             .setValue("gloryAmount", playerProfile.getGloryAmount() + "");
 
-        final Player player=  Bukkit.getPlayer(UUID.fromString(playerUuid));
+        plugin.getLogger().info("Rewarding player with UUID " + playerUuid + " " + (int) gloryDelta + " for " + reason + ".");
+
+        final Player player = Bukkit.getPlayer(UUID.fromString(playerUuid));
         if (player != null) {
             player.sendMessage(
                 ChatColor.COLOR_CHAR + "aYou've gained " + ChatColor.COLOR_CHAR + "e" + (int) gloryDelta +
-                ChatColor.COLOR_CHAR + "a for " + ChatColor.COLOR_CHAR + "e" + reason + ChatColor.COLOR_CHAR +
+                ChatColor.COLOR_CHAR + "a Glory for " + ChatColor.COLOR_CHAR + "e" + reason + ChatColor.COLOR_CHAR +
                 "a."
             );
         }
     }
 
     public void hardSetPlayerGlory(String playerUuid, int gloryAmount) {
+        plugin.getLogger().info("Setting player with UUID " + playerUuid + " glory amount to " + gloryAmount + ".");
         final GloryProfile playerProfile = gloryProfiles.stream().filter(profile ->
             profile.getPlayerUuid().equalsIgnoreCase(playerUuid)
         ).findFirst().get();
 
-        playerProfile.setGloryAmount(gloryAmount);
+        playerProfile.setGloryAmount(Math.max(gloryAmount, 0));
 
         loader
             .getRowByCriteria(row -> Integer.parseInt(row.getValue("id")) == playerProfile.getId())

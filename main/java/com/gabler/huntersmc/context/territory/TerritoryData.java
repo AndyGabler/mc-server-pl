@@ -197,6 +197,10 @@ public class TerritoryData {
         row.setValue("color", playerTerritory.getColor());
     }
 
+    public List<Territory> allTerritories() {
+        return new ArrayList<>(territories);
+    }
+
     public void save() throws IOException {
         loader.save();
     }

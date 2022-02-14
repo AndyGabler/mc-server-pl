@@ -1,10 +1,11 @@
 #https://bukkit.fandom.com/wiki/Plugin_YAML
 name: HuntersMC
-version: 0.1.0
+version: 1.0.0
 main: com.gabler.huntersmc.HuntersMcPlugin
 description: PvP plugin for managing territories and wars between territories.
 authors:
   - AndyTheBrick
+api-version: 1.18
 commands:
   hunt:
     description: Reveal the location of another player and let them know you are tracking them.
@@ -77,6 +78,11 @@ commands:
     description: Check the amount of glory you have accumulated.
     permission-message: Andy can't code so you don't have permission to this important command.
     usage: "Usage /glory"
+  gloryset:
+    description: Set the glory of a player.
+    permission-message: You do not have permission to do this.
+    usage: "Usage /gloryset <player name> <glory amount>"
+    permission: huntersmc.set-glory
   hmcconfigure:
     description: Configure HuntersMC plugin.
     permission-message: You do not have permission to do this.
@@ -87,12 +93,14 @@ permissions:
     description: Catchall for the HuntersMC plugin.
     children:
       huntersmc.maintenance: true
+      huntersmc.admin: true
   huntersmc.admin:
     description: Admin for the HuntersMC plugin.
     children:
       huntersmc.maintenance: true
       huntersmc.update-config: true
       huntersmc.ignore-territory-protect: true
+      huntersmc.set-glory: true
   huntersmc.maintenance:
     description: Maintainence controls for the HuntersMC plugin.
     children:
@@ -116,3 +124,5 @@ permissions:
     description: Ability to build on territories otherwise protected.
   huntersmc.update-config:
     description: Ability to update the configuration.
+  huntersmc.set-glory:
+    description: Ability to set glory of another player.

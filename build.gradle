@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
@@ -47,4 +48,4 @@ test {
 mainClassName = 'com.gabler.huntersmc.util.Main'
 
 applicationName = 'HuntersMC'
-version = "0.1.0"
+version = "1.0.0"

@@ -24,7 +24,7 @@ public class GloryCheckCommand implements CommandExecutor {
 
         final Integer gloryAmount = gloryData.gloryAmountForPlayer(((Player) sender).getUniqueId().toString());
         if (gloryAmount != null) {
-            sender.sendMessage(ChatColor.COLOR_CHAR + "aYour glory: " + ChatColor.COLOR_CHAR + "e" + gloryAmount + ChatColor.COLOR_CHAR + "a.");
+            sender.sendMessage(ChatColor.COLOR_CHAR + "aYour Glory: " + ChatColor.COLOR_CHAR + "e" + gloryAmount + ChatColor.COLOR_CHAR + "a.");
         } else {
             sender.sendMessage(ChatColor.COLOR_CHAR + "cYou have no glory profile. Notify admin.");
         }

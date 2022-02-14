@@ -1,18 +1,6 @@
 package com.gabler.huntersmc;
 
-import com.gabler.huntersmc.commands.ConfigurationCommand;
-import com.gabler.huntersmc.commands.GloryCheckCommand;
-import com.gabler.huntersmc.commands.GuardListCommand;
-import com.gabler.huntersmc.commands.GuardRespawnCommand;
-import com.gabler.huntersmc.commands.GuardSpawnCommand;
-import com.gabler.huntersmc.commands.GuardTypesCommand;
-import com.gabler.huntersmc.commands.HuntCommand;
-import com.gabler.huntersmc.commands.HmcSaveCommand;
-import com.gabler.huntersmc.commands.MyGuardsCommand;
-import com.gabler.huntersmc.commands.RelationshipBreakCommand;
-import com.gabler.huntersmc.commands.RelationshipEstablishCommand;
-import com.gabler.huntersmc.commands.RelationshipTermsCommand;
-import com.gabler.huntersmc.commands.TerritoryClaimCommand;
+import com.gabler.huntersmc.commands.*;
 import com.gabler.huntersmc.context.glory.GloryData;
 import com.gabler.huntersmc.context.guard.GuardData;
 import com.gabler.huntersmc.context.relationship.RelationshipData;
@@ -24,8 +12,10 @@ import com.gabler.huntersmc.handlers.EntityDeathHandler;
 import com.gabler.huntersmc.handlers.EntityTargetHandler;
 import com.gabler.huntersmc.handlers.InventoryOpenHandler;
 import com.gabler.huntersmc.handlers.PlayerChatHandler;
+import com.gabler.huntersmc.handlers.PlayerDeathHandler;
 import com.gabler.huntersmc.handlers.PlayerJoinHandler;
 import com.gabler.huntersmc.handlers.PlayerMovementHandler;
+import com.gabler.huntersmc.scheduled.TerritoryHoldingRewardRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,14 +55,14 @@ public class HuntersMcPlugin extends JavaPlugin {
         // Territory setup commands
         getCommand("claim").setExecutor(new TerritoryClaimCommand(this, territoryData, gloryData));
         getCommand("guard").setExecutor(new GuardSpawnCommand(this, territoryData, guardData, gloryData));
-        getCommand("guardtypes").setExecutor(new GuardTypesCommand());
+        getCommand("guardtypes").setExecutor(new GuardTypesCommand(this));
         getCommand("guardlist").setExecutor(new GuardListCommand(guardData));
         getCommand("myguards").setExecutor(new MyGuardsCommand(territoryData, guardData));
 
         // Relationship commands
-        getCommand("envoy").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.AMBASSADOR));
-        getCommand("ally").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.ALLY));
-        getCommand("declarewar").setExecutor(new RelationshipEstablishCommand(territoryData, relationshipData, gloryData, RelationshipType.WAR));
+        getCommand("envoy").setExecutor(new RelationshipEstablishCommand(this, territoryData, relationshipData, gloryData, RelationshipType.AMBASSADOR));
+        getCommand("ally").setExecutor(new RelationshipEstablishCommand(this, territoryData, relationshipData, gloryData, RelationshipType.ALLY));
+        getCommand("declarewar").setExecutor(new RelationshipEstablishCommand(this, territoryData, relationshipData, gloryData, RelationshipType.WAR));
         getCommand("eject").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.AMBASSADOR));
         getCommand("rejectalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.PENDING_ALLY));
         getCommand("breakalliance").setExecutor(new RelationshipBreakCommand(territoryData, relationshipData, gloryData, RelationshipType.ALLY));
@@ -82,16 +72,23 @@ public class HuntersMcPlugin extends JavaPlugin {
 
         // Glory commands
         getCommand("glory").setExecutor(new GloryCheckCommand(gloryData));
+        getCommand("gloryset").setExecutor(new GlorySetCommand(gloryData));
 
         // Event Listeners
         getServer().getPluginManager().registerEvents(new PlayerMovementHandler(territoryData, guardData, relationshipData), this);
         getServer().getPluginManager().registerEvents(new EntityTargetHandler(territoryData, guardData, relationshipData), this);
-        getServer().getPluginManager().registerEvents(new EntityDeathHandler(guardData), this);
+        getServer().getPluginManager().registerEvents(new EntityDeathHandler(this, guardData, gloryData), this);
         getServer().getPluginManager().registerEvents(new PlayerChatHandler(territoryData), this);
         getServer().getPluginManager().registerEvents(new EntityDamageHandler(territoryData, guardData, relationshipData), this);
-        getServer().getPluginManager().registerEvents(new BlockModificationHandler(territoryData, relationshipData), this);
+        getServer().getPluginManager().registerEvents(new BlockModificationHandler(this, territoryData, relationshipData, gloryData), this);
         getServer().getPluginManager().registerEvents(new InventoryOpenHandler(territoryData, relationshipData), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinHandler(gloryData), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathHandler(this, territoryData, guardData, gloryData), this);
+
+        // Scheduled tasks
+        getServer().getScheduler().scheduleSyncRepeatingTask(
+            this, new TerritoryHoldingRewardRunnable(this, territoryData, gloryData), 0L, 36000L
+        );
 
         getLogger().info("HuntersMC plugin has been enabled.");
     }
